@@ -12,9 +12,9 @@ const images = [
   "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?auto=format&fit=crop&w=800&q=80",
 ];
 
-export const Card = ({ id, title, price }: any) => {
+export const Card = ({ title, price, product_id }: any) => {
   return (
-    <Link href={`/feed/${id}`} asChild>
+    <Link href={`/feed/${product_id}`} asChild>
       <Pressable className="ml-2">
         <View className="my-2 flex items-center justify-center overflow-hidden rounded-xl  border border-neutral-300 bg-white">
           <Image
