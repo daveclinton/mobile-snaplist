@@ -1,12 +1,10 @@
 /* eslint-disable max-lines-per-function */
 import Slider from "@react-native-community/slider";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-
-import type { FormType } from "@/components/login-form";
 import {
   Button,
   ControlledNormalInput,
@@ -14,12 +12,22 @@ import {
   SafeAreaView,
   Text,
   View,
+  showErrorMessage,
 } from "@/ui";
 import * as ImagePicker from "expo-image-picker";
+import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory";
+import Loader from "@/components/Loader";
 
 export default function ListItem() {
-  const { handleSubmit, control } = useForm<FormType>({});
+  const { handleSubmit, control } = useForm<any>({});
+  const { mutate: createInventory, isPending } = useCreateInventory();
   const [image, setImage] = useState<any>(null);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Ebay", value: "ebay" },
+    { label: "Facebook", value: "facebook" },
+  ]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -29,22 +37,36 @@ export default function ListItem() {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
-  const [selectedMarketPlace, setSelectedMarketPlace] = useState();
   const [sliderValue, setSliderValue] = useState(50);
   const router = useRouter();
   const handleSliderValueChange = (value: React.SetStateAction<number>) => {
     setSliderValue(value);
   };
+  const onSubmit = (formData: any) => {
+    const data = {
+      ...formData,
+      image: image,
+      marketplace: value,
+      price: sliderValue,
+    };
+    console.log("formData", data);
+    createInventory(data, {
+      onSuccess: () => {
+        router.push("/");
+      },
+      onError: () => {
+        showErrorMessage("Error Creating Product");
+      },
+    });
+  };
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <FocusAwareStatusBar />
+      {isPending && <Loader />}
       <SafeAreaView>
         <View className="flex-1 px-6">
           <Text>Item Photos</Text>
@@ -66,39 +88,32 @@ export default function ListItem() {
             }}
           />
           <Text>Fill Item Details</Text>
+          <ControlledNormalInput control={control} name="title" label="Title" />
           <ControlledNormalInput
-            testID="email-input"
             control={control}
-            name="username"
-            label="Title"
-          />
-          <ControlledNormalInput
-            testID="email-input"
-            control={control}
-            name="username"
+            name="description"
             label="Description"
           />
           <ControlledNormalInput
-            testID="email-input"
             control={control}
-            name="username"
+            name="subTitle"
             label="Category"
           />
           <ControlledNormalInput
             testID="email-input"
             control={control}
-            name="username"
+            name="condition_description"
             label="Condition"
           />
           <Text className="my-3">MarketPlace</Text>
-          <Picker
-            selectedValue={selectedMarketPlace}
-            onValueChange={(itemValue) => setSelectedMarketPlace(itemValue)}
-            style={styles.pickerStyle}
-          >
-            <Picker.Item label="Ebay" value="ebay" />
-            <Picker.Item label="Facebook Market Place" value="Facebook" />
-          </Picker>
+          <DropDownPicker
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+          />
           <Text className="my-3">Set Price</Text>
           <View>
             <Slider
@@ -117,12 +132,7 @@ export default function ListItem() {
               <Text>$ {sliderValue.toFixed(2)}</Text>
             </View>
           </View>
-          <Button
-            label="List Now"
-            onPress={() => {
-              handleSubmit;
-            }}
-          />
+          <Button label="List Now" onPress={handleSubmit(onSubmit)} />
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -136,6 +146,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     borderWidth: 5,
+    height: 100,
     borderColor: "#D1D5DB",
     backgroundColor: "#FAFAFA",
     paddingHorizontal: 10,
