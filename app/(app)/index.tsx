@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { MasonryFlashList } from "@shopify/flash-list";
-import React from "react";
+import React, { useEffect } from "react";
 import { RefreshControl, TextInput } from "react-native";
 
 import { Card } from "@/components/card";
@@ -32,6 +32,10 @@ export default function Feed() {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
+  }, [refetch]);
+
+  useEffect(() => {
+    refetch();
   }, [refetch]);
 
   const renderItem = React.useCallback(

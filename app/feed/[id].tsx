@@ -18,11 +18,9 @@ export default function Post() {
   const local = useLocalSearchParams<{ id: string }>();
 
   console.log("ID is here", local?.id);
+  const productId = local?.id;
 
-  const { data, isLoading, isError } = useSingleProduct({
-    //@ts-ignore
-    variables: { id: local.id },
-  });
+  const { data, isLoading, isError } = useSingleProduct(productId as any);
 
   console.log("Data", data);
 

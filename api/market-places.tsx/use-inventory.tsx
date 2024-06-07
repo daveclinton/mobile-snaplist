@@ -1,6 +1,7 @@
 import type { AxiosError } from "axios";
 import { createQuery } from "react-query-kit";
 import { client } from "../common/client";
+import { useQuery } from "@tanstack/react-query";
 
 type Response = any;
 type Variables = void;
@@ -12,10 +13,10 @@ export const useInventory = createQuery<Response, Variables, AxiosError>({
   },
 });
 
-export const useSingleProduct = createQuery<Response, Variables, AxiosError>({
+export const useSingleProduct = createQuery<Response, any, AxiosError>({
   queryKey: ["data"],
-  fetcher: (product_id) => {
-    return client.get(`inventory/${product_id}`).then((response) => {
+  fetcher: (productId) => {
+    return client.get(`inventory/${productId}`).then((response) => {
       return response.data;
     });
   },
