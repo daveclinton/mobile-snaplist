@@ -3,7 +3,6 @@ import axios from "axios";
 
 export const client = axios.create({
   baseURL: "https://snaplist-tdfh.onrender.com/api/v1",
-  // baseURL: "http://157.173.202.98:8000/api/v1",
   headers: {
     "Content-Type": "application/json",
   },

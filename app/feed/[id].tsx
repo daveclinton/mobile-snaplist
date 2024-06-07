@@ -22,7 +22,7 @@ export default function Post() {
 
   const { data, isLoading, isError } = useSingleProduct(productId as any);
 
-  console.log("Data", data);
+  console.log("Data", data[0]);
 
   if (isLoading) {
     return (
