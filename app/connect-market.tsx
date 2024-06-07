@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useMarketPlaces } from "@/api/market-places.tsx/use-marketplaces";
 import {
@@ -16,7 +16,6 @@ const Facebook = require("../assets/facebook.svg");
 export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
-  console.log(data);
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -24,7 +23,6 @@ export default function ConnectMarket() {
       </View>
     );
   }
-
   return (
     <>
       <FocusAwareStatusBar />

@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { MasonryFlashList } from "@shopify/flash-list";
 import React from "react";
-import { TextInput } from "react-native";
+import { RefreshControl, TextInput } from "react-native";
 
 import { Card } from "@/components/card";
 import {
@@ -24,8 +24,15 @@ const Ebay = require("../../assets/ebay.svg");
 const EmptyState = require("../../assets/emptyState.svg");
 
 export default function Feed() {
-  const { data, isLoading, isError } = useInventory();
+  const { data, isLoading, isError, refetch } = useInventory();
   const router = useRouter();
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
   const renderItem = React.useCallback(
     ({ item }: { item: any }) => <Card {...item} />,
     []
@@ -116,6 +123,9 @@ export default function Feed() {
           keyExtractor={(_, index) => `item-${index}`}
           ListEmptyComponent={<EmptyList isLoading={isLoading} />}
           estimatedItemSize={300}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
     </>

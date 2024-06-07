@@ -245,10 +245,10 @@ export function ControlledNormalInput<T extends FieldValues>(
   return (
     <>
       <View className="mt-3 flex flex-row items-center rounded-xl border-[0.5px] h-[42px] border-neutral-300 bg-[#FAFAFA] px-2.5">
-        <Text className="text-grey-100 mb-1 text-lg">{label}</Text>
         <TextInput
           className="h-[50px] flex-1"
           autoCapitalize="none"
+          placeholder={label}
           autoCorrect={false}
           onChangeText={field.onChange}
           value={(field.value as string) || ""}

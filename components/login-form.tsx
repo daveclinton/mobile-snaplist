@@ -47,7 +47,7 @@ export const LoginForm = ({
         Sign In
       </Text>
       <Text testID="form-title" className="pb-6 text-3xl font-bold">
-        Welcome back to {"\n"}snaplistt
+        Welcome back to {"\n"}snaplist
       </Text>
       <ControlledEmailInput
         testID="email-input"
