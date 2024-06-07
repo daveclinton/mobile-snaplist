@@ -113,6 +113,7 @@ export default function ListItem() {
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
+            listMode="SCROLLVIEW"
           />
           <Text className="my-3">Set Price</Text>
           <View>
