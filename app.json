@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "snaplistt",
-    "slug": "snaplist-2",
-    "version": "1.0.1",
+    "slug": "snaplist-test",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "myapp",
@@ -21,7 +21,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.daveclinton.snaplistt"
+      "package": "com.daveclinton.snaplistt",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -53,8 +57,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9bf39d6a-38c3-48e6-b5f1-8b98b787e50d"
+        "projectId": "a19e92ef-09df-4d1a-b7a8-97911bd5b938"
       }
-    }
+    },
+    "owner": "dclintonn"
   }
 }
