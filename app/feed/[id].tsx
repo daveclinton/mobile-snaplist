@@ -17,12 +17,9 @@ const EmptyState = require("../../assets/emptyState.svg");
 export default function Post() {
   const local = useLocalSearchParams<{ id: string }>();
 
-  console.log("ID is here", local?.id);
   const productId = local?.id;
 
   const { data, isLoading, isError } = useSingleProduct(productId as any);
-
-  console.log("Data", data[0]);
 
   if (isLoading) {
     return (
@@ -66,7 +63,7 @@ export default function Post() {
   }
 
   return (
-    <View className="flex-1 p-3 ">
+    <View className="flex-1 p-3 items-center ">
       <Stack.Screen
         options={{
           title: "Detail Product",
@@ -76,8 +73,13 @@ export default function Post() {
         }}
       />
       <FocusAwareStatusBar />
-      <Text className="text-xl">Here</Text>
-      <Text>Here </Text>
+      <Text className="text-xl">{data?.image_urls?.[0]}</Text>
+      <View className="h-72 w-72">
+        <Image
+          source={data?.image_urls?.[0]}
+          className=" h-full w-full overflow-hidden"
+        />
+      </View>
     </View>
   );
 }
