@@ -4,6 +4,12 @@ import { Image, Pressable, Text, View } from "@/ui";
 import { Dots } from "@/ui/icons/dots";
 import { Rate } from "@/ui/icons/rate";
 
+export interface InventoryItem {
+  title: string;
+  price: number;
+  product_id: string;
+}
+
 const images = [
   "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=800&q=80",
   "https://images.unsplash.com/photo-1564507004663-b6dfb3c824d5?auto=format&fit=crop&w=800&q=80",
@@ -12,7 +18,7 @@ const images = [
   "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?auto=format&fit=crop&w=800&q=80",
 ];
 
-export const Card = ({ title, price, product_id }: any) => {
+export const Card = ({ title, price, product_id }: InventoryItem) => {
   return (
     <Link href={`/feed/${product_id}`} asChild>
       <Pressable className="ml-2">

@@ -1,7 +1,6 @@
 import type { AxiosError } from "axios";
 import { createQuery } from "react-query-kit";
 import { client } from "../common/client";
-import { useQuery } from "@tanstack/react-query";
 
 type Response = any;
 type Variables = void;
