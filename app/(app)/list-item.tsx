@@ -46,13 +46,35 @@ export default function ListItem() {
   const handleSliderValueChange = (value: React.SetStateAction<number>) => {
     setSliderValue(value);
   };
+
   const onSubmit = (formData: any) => {
+    const dummyData = {
+      sku: "ABC123",
+      category: "Electronics",
+      ebay_offer_id: "12345678",
+      marketplace: value,
+      title: formData.title,
+      subtitle: formData.subTitle,
+      description: formData.description,
+      currency: "USD",
+      price: sliderValue.toString(),
+      isbn: "",
+      brand: "Apple",
+      quantity: 1,
+      condition: "NEW",
+      condition_description: formData.condition_description,
+      locale: "en_US",
+      images: ["https://example.com/dummy-image.jpg"],
+      weight_unit: "POUND",
+      weight_value: 1.2,
+      mpn: "MLVF3LL/A",
+    };
+
     const data = {
       ...formData,
-      image: image,
-      marketplace: value,
-      price: sliderValue,
+      ...dummyData,
     };
+
     console.log("formData", data);
     createInventory(data, {
       onSuccess: () => {
