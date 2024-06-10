@@ -64,7 +64,7 @@ export default function ListItem() {
       condition: "NEW",
       condition_description: formData.condition_description,
       locale: "en_US",
-      images: ["https://example.com/dummy-image.jpg"],
+      images: [image],
       weight_unit: "POUND",
       weight_value: 1.2,
       mpn: "MLVF3LL/A",
