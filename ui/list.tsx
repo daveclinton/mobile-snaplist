@@ -1,9 +1,10 @@
 import { FlashList as NFlashList } from "@shopify/flash-list";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 
 import { Text } from "./text";
+import { useRouter } from "expo-router";
 type Props = {
   isLoading: boolean;
 };
@@ -11,12 +12,21 @@ type Props = {
 export const List = NFlashList;
 
 export const EmptyList = React.memo(({ isLoading }: Props) => {
+  const router = useRouter();
   return (
     <View className="min-h-[400px] flex-1 items-center justify-center">
       {!isLoading ? (
         <View>
           <NoData />
-          <Text className="pt-4 text-center">Sorry! No data found</Text>
+          <Text className="pt-4 mb-16 text-center">Sorry! No data found</Text>
+          <TouchableOpacity
+            className="bg-[#2A2661] px-4 py-3 rounded-lg"
+            onPress={() => router.push("/list-item")}
+          >
+            <Text className="text-white text-center font-bold">
+              Add New Product
+            </Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <ActivityIndicator />
@@ -37,7 +47,7 @@ export const NoData = () => (
     />
     <Path
       d="M122.68 127.82a9.016 9.016 0 0 1-8.61-6.366l-12.88-42.072a8.999 8.999 0 0 1 5.97-11.24L283.1 14.278a9.009 9.009 0 0 1 11.24 5.971l12.88 42.072a9.01 9.01 0 0 1-5.97 11.241l-175.94 53.864a8.976 8.976 0 0 1-2.63.395Z"
-      fill="#7eb55a"
+      fill="#2A2661"
     />
     <Circle cx={190.154} cy={24.955} r={20} fill="#7eb55a" />
     <Circle cx={190.154} cy={24.955} r={12.665} fill="#fff" />
@@ -51,7 +61,7 @@ export const NoData = () => (
     />
     <Path
       d="M525.636 184.174h-184a9.01 9.01 0 0 1-9-9v-44a9.01 9.01 0 0 1 9-9h184a9.01 9.01 0 0 1 9 9v44a9.01 9.01 0 0 1-9 9Z"
-      fill="#7eb55a"
+      fill="#2A2661"
     />
     <Circle cx={433.636} cy={105.174} r={20} fill="#7eb55a" />
     <Circle cx={433.636} cy={105.174} r={12.182} fill="#fff" />

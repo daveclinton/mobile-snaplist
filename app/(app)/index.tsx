@@ -122,7 +122,7 @@ export default function Feed() {
             data={data}
             renderItem={renderItem}
             numColumns={2}
-            keyExtractor={(item, index) => `item-${index}`}
+            keyExtractor={(item) => `item-${item?.product_id}`}
             ListEmptyComponent={<EmptyList isLoading={isLoading} />}
             estimatedItemSize={300}
             refreshControl={
