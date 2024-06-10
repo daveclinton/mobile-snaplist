@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Keyboard,
 } from "react-native";
 import { TextInput as NTextInput } from "react-native";
 import type { SvgProps } from "react-native-svg";
@@ -268,6 +269,8 @@ export function ControlledOTPInput<T extends FieldValues>(
     null,
     null,
     null,
+    null,
+    null,
   ]);
 
   const handleChangeText = (text: string, index: number) => {
@@ -280,6 +283,8 @@ export function ControlledOTPInput<T extends FieldValues>(
       const nextIndex = index + 1;
       if (nextIndex < inputRefs.current.length) {
         inputRefs.current[nextIndex]?.focus();
+      } else {
+        Keyboard.dismiss();
       }
     }
   };
