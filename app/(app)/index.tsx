@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from "@/ui";
-import { CameraSvg } from "@/ui/icons/camera";
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
 import { useInventory } from "@/api/market-places.tsx/use-inventory";
