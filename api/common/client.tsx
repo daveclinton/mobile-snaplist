@@ -2,7 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 export const client = axios.create({
-  baseURL: "https://snaplist-tdfh.onrender.com/api/v1",
+  // baseURL: "https://snaplist-tdfh.onrender.com/api/v1",
+  baseURL: "https://bc1b-102-135-169-124.ngrok-free.app/api/v1",
   headers: {
     "Content-Type": "application/json",
   },

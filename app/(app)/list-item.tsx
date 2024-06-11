@@ -4,7 +4,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import {
   Button,
   ControlledNormalInput,
@@ -17,6 +17,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory";
 import Loader from "@/components/Loader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ListItem() {
   const { handleSubmit, control } = useForm<any>({});
@@ -25,8 +26,8 @@ export default function ListItem() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Ebay", value: "ebay" },
-    { label: "Facebook", value: "facebook" },
+    { label: "Ebay", value: "Ebay" },
+    { label: "Facebook", value: "Facebook" },
   ]);
 
   const pickImage = async () => {
@@ -39,6 +40,7 @@ export default function ListItem() {
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      await AsyncStorage.setItem("capturedPhoto", result.assets[0].uri);
     }
   };
   const [sliderValue, setSliderValue] = useState(50);
@@ -47,7 +49,8 @@ export default function ListItem() {
     setSliderValue(value);
   };
 
-  const onSubmit = (formData: any) => {
+  const onSubmit = async (formData: any) => {
+    const imageURI = await AsyncStorage.getItem("capturedPhoto");
     const dummyData = {
       sku: "ABC123",
       category: "Electronics",
@@ -57,25 +60,23 @@ export default function ListItem() {
       subtitle: formData.subTitle,
       description: formData.description,
       currency: "USD",
-      price: sliderValue.toString(),
+      price: parseFloat(sliderValue.toFixed(2)),
       isbn: "",
       brand: "Apple",
       quantity: 1,
       condition: "NEW",
       condition_description: formData.condition_description,
       locale: "en_US",
-      images: [image],
+      images: imageURI ? [imageURI] : [],
       weight_unit: "POUND",
-      weight_value: 1.2,
+      weight_value: 0,
       mpn: "MLVF3LL/A",
     };
-
     const data = {
       ...formData,
       ...dummyData,
     };
-
-    console.log("formData", data);
+    console.log(data, "data");
     createInventory(data, {
       onSuccess: () => {
         router.push("/");
@@ -106,7 +107,7 @@ export default function ListItem() {
             variant="outline"
             className="rounded-2xl"
             onPress={() => {
-              router.push("/camera/camera-page");
+              router.push("/camera/visio-camera");
             }}
           />
           <Text>Fill Item Details</Text>
@@ -161,17 +162,3 @@ export default function ListItem() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  pickerStyle: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 20,
-    borderWidth: 5,
-    height: 100,
-    borderColor: "#D1D5DB",
-    backgroundColor: "#FAFAFA",
-    paddingHorizontal: 10,
-  },
-});

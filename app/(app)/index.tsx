@@ -14,7 +14,6 @@ import {
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
 import { useInventory } from "@/api/market-places.tsx/use-inventory";
-import Loader from "@/components/Loader";
 
 const Maercari = require("../../assets/mercari.svg");
 const Facebook = require("../../assets/facebook.svg");
@@ -115,21 +114,18 @@ export default function Feed() {
             <Text className="font-bold">Mercari</Text>
           </View>
         </View>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <MasonryFlashList
-            data={data}
-            renderItem={renderItem}
-            numColumns={2}
-            keyExtractor={(item) => `item-${item?.product_id}`}
-            ListEmptyComponent={<EmptyList isLoading={isLoading} />}
-            estimatedItemSize={300}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          />
-        )}
+
+        <MasonryFlashList
+          data={data}
+          renderItem={renderItem}
+          numColumns={2}
+          keyExtractor={(item) => `item-${item?.product_id}`}
+          ListEmptyComponent={<EmptyList isLoading={isLoading} />}
+          estimatedItemSize={300}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
       </View>
     </>
   );

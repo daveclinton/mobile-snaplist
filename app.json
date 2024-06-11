@@ -47,7 +47,15 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ]
+      ],
+      [
+      "react-native-vision-camera",
+      {
+        "cameraPermissionText": "Snaplist needs access to your Camera.",
+        "enableMicrophonePermission": true,
+        "microphonePermissionText": "Snaplist needs access to your Microphone."
+      }
+    ]
     ],
     "experiments": {
       "typedRoutes": true

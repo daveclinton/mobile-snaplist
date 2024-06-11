@@ -16,6 +16,7 @@ const Facebook = require("../assets/facebook.svg");
 export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
+  console.log("data", data);
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
