@@ -11,6 +11,7 @@ import { Help } from "@/ui/icons/help";
 import { ListItem } from "@/ui/icons/list-icon";
 import { Metrics } from "@/ui/icons/metrics";
 import { Notifications } from "@/ui/icons/notifications";
+import { Touchable, TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -98,9 +99,9 @@ export default function TabLayout() {
           title: "Settings",
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           headerLeft: () => (
-            <View className="ml-10">
+            <TouchableOpacity onPress={() => router.back()} className="ml-10">
               <ArrowLeft />
-            </View>
+            </TouchableOpacity>
           ),
           tabBarActiveTintColor: "#2A2661",
           tabBarTestID: "settings-tab",
@@ -121,12 +122,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Help color={color} />,
           headerRight: () => <CreateNewPostLink />,
           headerLeft: () => (
-            <View className="ml-10">
+            <TouchableOpacity onPress={() => router.back()} className="ml-10">
               <ArrowLeft />
-            </View>
+            </TouchableOpacity>
           ),
           tabBarActiveTintColor: "#2A2661",
-
           tabBarTestID: "settings-tab",
           headerTitleAlign: "center",
           headerStyle: {

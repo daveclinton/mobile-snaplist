@@ -9,6 +9,7 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useImageSearch } from "@/api/market-places.tsx/use-image-search";
 import Loader from "@/components/Loader";
+import { CancelIcon } from "@/ui/icons/cancel-icon";
 
 export default function CameraPage() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -88,7 +89,15 @@ export default function CameraPage() {
           headerShown: true,
           headerTitle: "Camera",
           headerTitleAlign: "center",
-          headerRight: () => <Button onPress={handleCancel} label="Cancel" />,
+          headerBackVisible: false,
+          headerRight: () => (
+            <TouchableOpacity onPress={handleCancel} className="ml-10">
+              <CancelIcon />
+            </TouchableOpacity>
+          ),
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
         }}
       />
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
