@@ -1,14 +1,9 @@
+import { Button } from "@/ui/button";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Stack } from "expo-router";
 import { useState, useRef } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import { View } from "@/ui";
 
 export default function CameraPage() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -17,16 +12,17 @@ export default function CameraPage() {
   const cameraRef = useRef<any | null>(null);
 
   if (!permission) {
-    return <View />;
+    return <View className="flex-1 justify-center p-6" />;
   }
 
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
+      <View className="flex-1 justify-center p-6">
+        <Stack.Screen options={{ headerShown: false }} />
         <Text style={{ textAlign: "center" }}>
           We need your permission to show the camera
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} label="grant permission" />
       </View>
     );
   }
