@@ -1,72 +1,66 @@
-import { Button, FocusAwareStatusBar } from "@/ui";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import * as FileSystem from "expo-file-system";
+import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Stack } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState, useRef } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from "react-native";
 
-export default function App() {
+export default function CameraPage() {
+  const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = useRef<CameraView | null>(null);
+  const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
+  const cameraRef = useRef<any | null>(null);
+
   if (!permission) {
-    return (
-      <View>
-        <Stack.Screen options={{ headerShown: false }} />
-      </View>
-    );
+    return <View />;
   }
+
   if (!permission.granted) {
     return (
-      <>
-        <FocusAwareStatusBar />
-        <Stack.Screen options={{ headerShown: false }} />
-        <View className="flex-1 justify-center items-center p-6">
-          <Text className="text-md ml-6 mt-4 font-semibold">
-            We need your permission to show the camera
-          </Text>
-          <Button
-            variant="primary"
-            onPress={requestPermission}
-            label="Grant Permission"
-          />
-        </View>
-      </>
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
     );
   }
 
-  const takePicture = async () => {
+  function toggleCameraFacing() {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  }
+
+  async function captureImage() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      const fileName = `${FileSystem.documentDirectory}photo_${Date.now()}.jpg`;
-
-      try {
-        await FileSystem.moveAsync({
-          from: photo?.uri as any,
-          to: fileName,
-        });
-
-        // Store the photo data in AsyncStorage
-        await AsyncStorage.setItem("capturedPhoto", fileName);
-        console.log("Photo saved to", fileName);
-      } catch (e) {
-        console.log("Error saving photo", e);
-      }
+      setCapturedImageUri(photo.uri);
     }
-  };
+  }
 
   return (
-    <>
+    <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="flex-1 justify-center items-center p-6">
-        <CameraView style={styles.camera} facing="back" ref={cameraRef} />
-        <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
-          <Text style={styles.captureButtonText}>Capture</Text>
-        </TouchableOpacity>
-      </View>
-    </>
+      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.captureButton}
+            onPress={captureImage}
+          />
+        </View>
+      </CameraView>
+      {capturedImageUri && <OtherPage imageUri={capturedImageUri} />}
+    </View>
   );
 }
+
+const OtherPage = ({ imageUri }: { imageUri: string }) => {
+  return <Image source={{ uri: imageUri }} style={{ flex: 1 }} />;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -76,14 +70,25 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  captureButton: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 25,
-    marginBottom: 20,
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  captureButtonText: {
-    fontSize: 16,
+
+  text: {
+    fontSize: 24,
     fontWeight: "bold",
+    color: "black",
+  },
+  captureButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "white",
+    alignSelf: "flex-end",
+    marginBottom: "20%",
   },
 });
