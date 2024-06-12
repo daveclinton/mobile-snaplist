@@ -2,8 +2,8 @@ import { Button } from "@/ui/button";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
 import { useState, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, Image, Alert } from "react-native";
-import { View } from "@/ui";
+import { StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text } from "@/ui";
 
 export default function CameraPage() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -72,6 +72,11 @@ export default function CameraPage() {
       />
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
         <View style={styles.buttonContainer}>
+          <View className="justify-center bg-amber-100">
+            <Text className="text-lg text-center  align-middle">
+              TAP SHUTTER BUTTON TO SEARCH
+            </Text>
+          </View>
           <TouchableOpacity
             style={styles.captureButton}
             onPress={captureImage}
@@ -84,7 +89,12 @@ export default function CameraPage() {
 }
 
 const OtherPage = ({ imageUri }: { imageUri: string }) => {
-  return <Image source={{ uri: imageUri }} style={{ flex: 1 }} />;
+  return (
+    <View className="flex-1 justify-center p-6">
+      <Image source={{ uri: imageUri }} style={{ flex: 1 }} />
+      <Button onPress={() => {}} label="Search" />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -97,12 +107,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: "row",
+    bottom: 0,
     backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-end",
+    alignSelf: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    borderRadius: 20,
   },
-
   text: {
     fontSize: 24,
     fontWeight: "bold",
@@ -113,7 +125,8 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     backgroundColor: "white",
-    alignSelf: "flex-end",
-    marginBottom: "20%",
+    marginBottom: "10%",
+    marginHorizontal: "auto",
+    marginTop: 10,
   },
 });
