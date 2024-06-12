@@ -4,6 +4,9 @@ import { Stack, useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { View, Text } from "@/ui";
+import { ImagesRoll } from "@/ui/icons/images";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CameraPage() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -11,6 +14,21 @@ export default function CameraPage() {
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
   const cameraRef = useRef<any | null>(null);
   const router = useRouter();
+  const [image, setImage] = useState<any>(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      await AsyncStorage.setItem("capturedPhoto", result.assets[0].uri);
+    }
+  };
 
   if (!permission) {
     return (
@@ -77,10 +95,15 @@ export default function CameraPage() {
               TAP SHUTTER BUTTON TO SEARCH
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.captureButton}
-            onPress={captureImage}
-          />
+          <View className="flex-row justify-between items-center">
+            <TouchableOpacity onPress={pickImage}>
+              <ImagesRoll />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={captureImage}
+            />
+          </View>
         </View>
       </CameraView>
       {capturedImageUri && <OtherPage imageUri={capturedImageUri} />}

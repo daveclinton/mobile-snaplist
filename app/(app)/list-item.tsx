@@ -92,23 +92,12 @@ export default function ListItem() {
       {isPending && <Loader />}
       <SafeAreaView>
         <View className="flex-1 px-6">
-          <Text>Item Photos</Text>
           <Button
             label="Take Picture"
             onPress={() => {
               router.push("/camera/camera-page");
             }}
             variant="outline"
-          />
-          <Button label="Upload Picture" onPress={pickImage} />
-          <Text>Item Details</Text>
-          <Button
-            label="AI Suggestions"
-            variant="outline"
-            className="rounded-2xl"
-            onPress={() => {
-              console.log("Here");
-            }}
           />
           <Text>Fill Item Details</Text>
           <ControlledNormalInput control={control} name="title" label="Title" />
