@@ -1,8 +1,8 @@
 import { Button } from "@/ui/button";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, Image, Alert } from "react-native";
 import { View } from "@/ui";
 
 export default function CameraPage() {
@@ -10,9 +10,18 @@ export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
   const cameraRef = useRef<any | null>(null);
+  const router = useRouter();
 
   if (!permission) {
-    return <View className="flex-1 justify-center p-6" />;
+    return (
+      <View className="flex-1 justify-center p-6">
+        <Stack.Screen options={{ headerShown: false }} />
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} label="grant permission" />
+      </View>
+    );
   }
 
   if (!permission.granted) {
@@ -31,6 +40,19 @@ export default function CameraPage() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
+  const handleCancel = () => {
+    Alert.alert("Discard Image", "Are you sure you want to exit the camera?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Discard",
+        onPress: () => {
+          setCapturedImageUri(null);
+          router.push("/list-item");
+        },
+      },
+    ]);
+  };
+
   async function captureImage() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -40,7 +62,14 @@ export default function CameraPage() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: "Camera",
+          headerTitleAlign: "center",
+          headerRight: () => <Button onPress={handleCancel} label="Cancel" />,
+        }}
+      />
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity

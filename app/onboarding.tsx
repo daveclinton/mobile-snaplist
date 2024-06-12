@@ -8,7 +8,7 @@ import { FocusAwareStatusBar, showErrorMessage } from "@/ui";
 
 export default function Login() {
   const router = useRouter();
-  const { mutate: login, isPending } = useLogin();
+  const { mutate: login, isPending, data } = useLogin();
   useSoftKeyboardEffect();
 
   const onSubmit = async (data: { username: string; password: string }) => {
@@ -17,7 +17,7 @@ export default function Login() {
         router.push("/connect-market");
       },
       onError: () => {
-        showErrorMessage("Error");
+        showErrorMessage("Invalid Username or Password");
       },
     });
   };
