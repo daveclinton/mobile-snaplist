@@ -39,7 +39,7 @@ export default function CameraPage() {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <Stack.Screen options={{ headerShown: false }} />
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
         <View style={styles.buttonContainer}>
@@ -50,7 +50,7 @@ export default function CameraPage() {
         </View>
       </CameraView>
       {capturedImageUri && <OtherPage imageUri={capturedImageUri} />}
-    </View>
+    </>
   );
 }
 

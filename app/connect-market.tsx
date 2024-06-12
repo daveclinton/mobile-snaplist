@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useMarketPlaces } from "@/api/market-places.tsx/use-marketplaces";
 import {
@@ -17,9 +17,20 @@ const Facebook = require("../assets/facebook.svg");
 export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
-  if (isLoading) {
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  console.log(isDataLoaded);
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      setIsDataLoaded(true);
+    }
+  }, [isLoading, data]);
+
+  if (!isDataLoaded) {
     return <Loader />;
   }
+
   return (
     <>
       <FocusAwareStatusBar />
