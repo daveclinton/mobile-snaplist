@@ -3,10 +3,12 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
-import { View, Text } from "@/ui";
+import { View, Text, showErrorMessage } from "@/ui";
 import { ImagesRoll } from "@/ui/icons/images";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useImageSearch } from "@/api/market-places.tsx/use-image-search";
+import Loader from "@/components/Loader";
 
 export default function CameraPage() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -14,6 +16,7 @@ export default function CameraPage() {
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
   const cameraRef = useRef<any | null>(null);
   const router = useRouter();
+
   const [image, setImage] = useState<any>(null);
 
   const pickImage = async () => {
@@ -112,10 +115,27 @@ export default function CameraPage() {
 }
 
 const OtherPage = ({ imageUri }: { imageUri: string }) => {
+  const { mutate: searchImage, isPending } = useImageSearch();
+  const handleSearch = async () => {
+    searchImage(
+      { image: imageUri },
+      {
+        onSuccess: () => {
+          console.log("Here");
+        },
+        onError: () => {
+          showErrorMessage("Error Scanning");
+        },
+      }
+    );
+  };
+  if (isPending) {
+    return <Loader />;
+  }
   return (
     <View className="flex-1 justify-center p-6">
       <Image source={{ uri: imageUri }} style={{ flex: 1 }} />
-      <Button onPress={() => {}} label="Search" />
+      <Button onPress={handleSearch} label="Search" />
     </View>
   );
 };

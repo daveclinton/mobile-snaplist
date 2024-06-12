@@ -14,7 +14,6 @@ import {
   View,
   showErrorMessage,
 } from "@/ui";
-import * as ImagePicker from "expo-image-picker";
 import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory";
 import Loader from "@/components/Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,27 +21,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function ListItem() {
   const { handleSubmit, control } = useForm<any>({});
   const { mutate: createInventory, isPending } = useCreateInventory();
-  const [image, setImage] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     { label: "Ebay", value: "Ebay" },
     { label: "Facebook", value: "Facebook" },
   ]);
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      await AsyncStorage.setItem("capturedPhoto", result.assets[0].uri);
-    }
-  };
   const [sliderValue, setSliderValue] = useState(50);
   const router = useRouter();
   const handleSliderValueChange = (value: React.SetStateAction<number>) => {
