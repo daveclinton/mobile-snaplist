@@ -107,7 +107,7 @@ export default function ListItem() {
             variant="outline"
             className="rounded-2xl"
             onPress={() => {
-              router.push("/camera/visio-camera");
+              console.log("Here");
             }}
           />
           <Text>Fill Item Details</Text>

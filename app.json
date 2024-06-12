@@ -2,7 +2,7 @@
   "expo": {
     "name": "snaplistt",
     "slug": "snaplist-test",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "myapp",
@@ -47,15 +47,7 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ],
-      [
-      "react-native-vision-camera",
-      {
-        "cameraPermissionText": "Snaplist needs access to your Camera.",
-        "enableMicrophonePermission": true,
-        "microphonePermissionText": "Snaplist needs access to your Microphone."
-      }
-    ]
+      ]
     ],
     "experiments": {
       "typedRoutes": true

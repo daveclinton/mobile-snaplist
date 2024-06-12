@@ -28,9 +28,6 @@ target 'snaplistt' do
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
 
-  # Add react-native-worklets-core pod
-  pod 'react-native-worklets-core', :path => '../node_modules/react-native-worklets-core'
-
   post_install do |installer|
     react_native_post_install(
       installer,
