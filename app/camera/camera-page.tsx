@@ -1,65 +1,74 @@
 import { Button } from "@/ui/button";
-import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
-import { useState, useRef } from "react";
-import { StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
-import { View, Text, showErrorMessage } from "@/ui";
+import { useState, useRef, JSX } from "react";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+  FlatList,
+} from "react-native";
+import { View, Text } from "@/ui";
 import { ImagesRoll } from "@/ui/icons/images";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useImageSearch } from "@/api/market-places.tsx/use-image-search";
 import Loader from "@/components/Loader";
-import { CancelIcon } from "@/ui/icons/cancel-icon";
+import { CancelIcon, SmallCancel } from "@/ui/icons/cancel-icon";
+import { showMessage } from "react-native-flash-message";
+import ProductItem from "@/components/Porduct-Item";
+
+export const createFormData = (uri: string): FormData => {
+  const fileName = uri.split("/").pop() || "";
+  const fileType = fileName.split(".").pop() || "";
+  const formData = new FormData();
+
+  formData.append("file", {
+    uri,
+    name: fileName,
+    type: `image/${fileType}`,
+  } as any);
+
+  return formData;
+};
 
 export default function CameraPage() {
-  const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
   const cameraRef = useRef<any | null>(null);
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  const [uploadResponseData, setUploadResponseData] = useState<any>(null);
 
-  const [image, setImage] = useState<any>(null);
+  if (uploadResponseData?.image_results) {
+    console.log(uploadResponseData.image_results[0]);
+  }
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      await AsyncStorage.setItem("capturedPhoto", result.assets[0].uri);
+      const imageUri = result.assets[0].uri;
+      setCapturedImageUri(imageUri);
+      await AsyncStorage.setItem("capturedPhoto", imageUri);
     }
   };
 
-  if (!permission) {
+  if (!permission || !permission.granted) {
     return (
       <View className="flex-1 justify-center p-6">
         <Stack.Screen options={{ headerShown: false }} />
         <Text style={{ textAlign: "center" }}>
           We need your permission to show the camera
         </Text>
-        <Button onPress={requestPermission} label="grant permission" />
+        <Button onPress={requestPermission} label="Grant permission" />
       </View>
     );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View className="flex-1 justify-center p-6">
-        <Stack.Screen options={{ headerShown: false }} />
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} label="grant permission" />
-      </View>
-    );
-  }
-
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
   const handleCancel = () => {
@@ -75,12 +84,39 @@ export default function CameraPage() {
     ]);
   };
 
-  async function captureImage() {
+  const handleImageCapture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       setCapturedImageUri(photo.uri);
     }
-  }
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      setIsPending(true);
+      const response = await uploadImageAsync(capturedImageUri as string);
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+      const responseData = await response.json();
+      setUploadResponseData(responseData.data);
+      // await AsyncStorage.setItem(
+      //   "uploadResponseData",
+      //   JSON.stringify(responseData.data)
+      // );
+      showMessage({
+        message: "Image uploaded successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      showMessage({
+        message: "Failed to upload image. Please try again.",
+        type: "danger",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   return (
     <>
@@ -100,7 +136,7 @@ export default function CameraPage() {
           },
         }}
       />
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+      <CameraView style={styles.camera} facing="back" ref={cameraRef}>
         <View style={styles.buttonContainer}>
           <View className="justify-center bg-amber-100">
             <Text className="text-lg text-center  align-middle">
@@ -113,41 +149,54 @@ export default function CameraPage() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.captureButton}
-              onPress={captureImage}
+              onPress={handleImageCapture}
             />
           </View>
         </View>
       </CameraView>
-      {capturedImageUri && <OtherPage imageUri={capturedImageUri} />}
+      {isPending ? (
+        <Loader />
+      ) : capturedImageUri && uploadResponseData === null ? (
+        <View className="flex-1 justify-center p-6">
+          <View className="flex justify-end items-end mb-2">
+            <TouchableOpacity
+              onPress={() => {
+                setCapturedImageUri(null);
+              }}
+            >
+              <SmallCancel />
+            </TouchableOpacity>
+          </View>
+          <Image source={{ uri: capturedImageUri }} style={{ flex: 1 }} />
+          <Button onPress={handleImageUpload} label="Upload Image" />
+        </View>
+      ) : uploadResponseData !== null ? (
+        <View className="flex-1 p-6">
+          <View className="flex justify-end items-end mb-2">
+            <TouchableOpacity
+              onPress={() => {
+                setUploadResponseData(null);
+                setCapturedImageUri(null);
+              }}
+            >
+              <SmallCancel />
+            </TouchableOpacity>
+          </View>
+          {uploadResponseData && (
+            <FlatList
+              data={uploadResponseData.image_results}
+              keyExtractor={(item, index) => item.position || index.toString()}
+              renderItem={({ item }) => (
+                <ProductItem key={item.position} {...item} />
+              )}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            />
+          )}
+        </View>
+      ) : null}
     </>
   );
 }
-
-const OtherPage = ({ imageUri }: { imageUri: string }) => {
-  const { mutate: searchImage, isPending } = useImageSearch();
-  const handleSearch = async () => {
-    searchImage(
-      { image: imageUri },
-      {
-        onSuccess: () => {
-          console.log("Here");
-        },
-        onError: () => {
-          showErrorMessage("Error Scanning");
-        },
-      }
-    );
-  };
-  if (isPending) {
-    return <Loader />;
-  }
-  return (
-    <View className="flex-1 justify-center p-6">
-      <Image source={{ uri: imageUri }} style={{ flex: 1 }} />
-      <Button onPress={handleSearch} label="Search" />
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -182,3 +231,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
+
+async function uploadImageAsync(uri: string) {
+  const userData = await AsyncStorage.getItem("user-data");
+  if (!userData) {
+    throw new Error("User data not found");
+  }
+  const parsedUserData = JSON.parse(userData);
+  const token = parsedUserData.access_token;
+  const apiUrl =
+    "https://snaplist-tdfh.onrender.com/api/v1/inventory/image/upload";
+  const uriArray = uri.split(".");
+  const fileType = uriArray[uriArray.length - 1];
+  const formData = new FormData();
+  formData.append("image", {
+    uri,
+    name: `photo.${fileType}`,
+    type: `image/${fileType}`,
+  } as any);
+
+  const options = {
+    method: "POST",
+    body: formData,
+    mode: "cors" as RequestMode,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return fetch(apiUrl, options);
+}

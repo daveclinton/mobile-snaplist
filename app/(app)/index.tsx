@@ -114,7 +114,6 @@ export default function Feed() {
             <Text className="font-bold">Mercari</Text>
           </View>
         </View>
-
         <MasonryFlashList
           data={data}
           renderItem={renderItem}
