@@ -22,6 +22,7 @@ const EmptyState = require("../../assets/emptyState.svg");
 
 export default function Feed() {
   const { data, isLoading, isError, refetch } = useInventory();
+  console.log(data);
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
 
