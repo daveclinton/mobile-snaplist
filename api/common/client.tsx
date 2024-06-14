@@ -5,7 +5,8 @@ export const client = axios.create({
   baseURL: "https://snaplist-tdfh.onrender.com/api/v1",
   // baseURL: "https://138e-102-135-169-123.ngrok-free.app/api/v1",
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/json",
+    "Content-Type": "multipart/form-data",
   },
 });
 

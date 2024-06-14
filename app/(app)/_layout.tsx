@@ -11,7 +11,7 @@ import { Help } from "@/ui/icons/help";
 import { ListItem } from "@/ui/icons/list-icon";
 import { Metrics } from "@/ui/icons/metrics";
 import { Notifications } from "@/ui/icons/notifications";
-import { Touchable, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -22,9 +22,7 @@ export default function TabLayout() {
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = await isAuthenticated();
-      if (authStatus) {
-        router.replace("/");
-      } else {
+      if (!authStatus) {
         router.replace("/onboarding");
       }
     };

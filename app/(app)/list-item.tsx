@@ -2,7 +2,7 @@
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView } from "react-native";
 import {
@@ -13,16 +13,18 @@ import {
   Text,
   View,
   showErrorMessage,
+  Image,
 } from "@/ui";
 import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory";
 import Loader from "@/components/Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { showMessage } from "react-native-flash-message";
 
 export default function ListItem() {
-  const { handleSubmit, control } = useForm<any>({});
+  const { handleSubmit, control, setValue } = useForm<any>({});
   const { mutate: createInventory, isPending } = useCreateInventory();
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setItem] = useState(null);
   const [items, setItems] = useState([
     { label: "Ebay", value: "Ebay" },
     { label: "Facebook", value: "Facebook" },
@@ -33,8 +35,30 @@ export default function ListItem() {
     setSliderValue(value);
   };
 
+  const [imageURI, setImageURI] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const storedImageURI = await AsyncStorage.getItem("capturedPhoto");
+      const storedItemTitle = await AsyncStorage.getItem("productTitle");
+      setImageURI(storedImageURI);
+      if (storedItemTitle) {
+        setValue("title", storedItemTitle);
+      }
+    };
+
+    fetchData();
+  }, [setValue]);
+
   const onSubmit = async (formData: any) => {
-    const imageURI = await AsyncStorage.getItem("capturedPhoto");
+    const uriArray = imageURI.split(".");
+    const fileType = uriArray[uriArray.length - 1];
+    const imageData = new FormData();
+    imageData.append("image", {
+      imageURI,
+      name: `photo.${fileType}`,
+      type: `image/${fileType}`,
+    } as any);
     const dummyData = {
       sku: "ABC123",
       category: "Electronics",
@@ -51,7 +75,7 @@ export default function ListItem() {
       condition: "NEW",
       condition_description: formData.condition_description,
       locale: "en_US",
-      images: imageURI ? [imageURI] : [],
+      images: [],
       weight_unit: "POUND",
       weight_value: 0,
       mpn: "MLVF3LL/A",
@@ -60,10 +84,14 @@ export default function ListItem() {
       ...formData,
       ...dummyData,
     };
-    console.log(data, "data");
+    console.log(data);
     createInventory(data, {
       onSuccess: () => {
-        router.push("/");
+        router.push("/list-item");
+        showMessage({
+          message: "Product Created Successfully!",
+          type: "success",
+        });
       },
       onError: () => {
         showErrorMessage("Error Creating Product");
@@ -83,6 +111,14 @@ export default function ListItem() {
             }}
             variant="outline"
           />
+          <View className=" items-center justify-center">
+            <Image
+              source={{
+                uri: imageURI,
+              }}
+              className="rounded-xl h-20 w-20 object-contain"
+            />
+          </View>
           <Text>Fill Item Details</Text>
           <ControlledNormalInput control={control} name="title" label="Title" />
           <ControlledNormalInput
@@ -107,7 +143,7 @@ export default function ListItem() {
             value={value}
             items={items}
             setOpen={setOpen}
-            setValue={setValue}
+            setValue={setItem}
             setItems={setItems}
             listMode="SCROLLVIEW"
           />

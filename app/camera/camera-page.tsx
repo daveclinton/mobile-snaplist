@@ -100,10 +100,6 @@ export default function CameraPage() {
       }
       const responseData = await response.json();
       setUploadResponseData(responseData.data);
-      // await AsyncStorage.setItem(
-      //   "uploadResponseData",
-      //   JSON.stringify(responseData.data)
-      // );
       showMessage({
         message: "Image uploaded successfully!",
         type: "success",
@@ -249,6 +245,8 @@ async function uploadImageAsync(uri: string) {
     name: `photo.${fileType}`,
     type: `image/${fileType}`,
   } as any);
+
+  console.log(formData, "formData");
 
   const options = {
     method: "POST",
