@@ -39,11 +39,6 @@ export default function CameraPage() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [uploadResponseData, setUploadResponseData] = useState<any>(null);
-
-  if (uploadResponseData?.image_results) {
-    console.log(uploadResponseData.image_results[0]);
-  }
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -51,11 +46,9 @@ export default function CameraPage() {
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
       const imageUri = result.assets[0].uri;
       setCapturedImageUri(imageUri);
-      await AsyncStorage.setItem("capturedPhoto", imageUri);
     }
   };
 
@@ -99,6 +92,10 @@ export default function CameraPage() {
         throw new Error("Failed to upload image");
       }
       const responseData = await response.json();
+      await AsyncStorage.setItem(
+        "capturedPhoto",
+        responseData?.data?.search_parameters?.image_url
+      );
       setUploadResponseData(responseData.data);
       showMessage({
         message: "Image uploaded successfully!",

@@ -34,7 +34,6 @@ export default function ListItem() {
   const handleSliderValueChange = (value: React.SetStateAction<number>) => {
     setSliderValue(value);
   };
-
   const [imageURI, setImageURI] = useState<any>(null);
 
   useEffect(() => {
@@ -46,19 +45,10 @@ export default function ListItem() {
         setValue("title", storedItemTitle);
       }
     };
-
     fetchData();
   }, [setValue]);
 
   const onSubmit = async (formData: any) => {
-    const uriArray = imageURI.split(".");
-    const fileType = uriArray[uriArray.length - 1];
-    const imageData = new FormData();
-    imageData.append("image", {
-      imageURI,
-      name: `photo.${fileType}`,
-      type: `image/${fileType}`,
-    } as any);
     const dummyData = {
       sku: "ABC123",
       category: "Electronics",
@@ -75,7 +65,7 @@ export default function ListItem() {
       condition: "NEW",
       condition_description: formData.condition_description,
       locale: "en_US",
-      images: [],
+      images: [imageURI],
       weight_unit: "POUND",
       weight_value: 0,
       mpn: "MLVF3LL/A",
@@ -84,7 +74,7 @@ export default function ListItem() {
       ...formData,
       ...dummyData,
     };
-    console.log(data);
+    console.log("payload", data);
     createInventory(data, {
       onSuccess: () => {
         router.push("/list-item");

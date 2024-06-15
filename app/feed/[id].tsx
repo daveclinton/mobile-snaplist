@@ -145,7 +145,7 @@ export default function Post() {
             <ActivityIndicator color="#ffffff" />
           ) : (
             <Text className="text-white text-center font-semibold">
-              De List
+              Publish
             </Text>
           )}
         </TouchableOpacity>

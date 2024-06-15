@@ -1,7 +1,6 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect } from "react";
 import { FlatList, RefreshControl, TextInput } from "react-native";
 import { useRouter } from "expo-router";
-import { Card, InventoryItem } from "@/components/card";
 import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
@@ -17,13 +16,6 @@ const EmptyState = require("../../assets/emptyState.svg");
 export default function Feed() {
   const { data, isLoading, isError, refetch } = useInventory();
   const router = useRouter();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  }, [refetch]);
 
   useEffect(() => {
     refetch();
@@ -136,9 +128,6 @@ export default function Feed() {
             keyExtractor={(item) => item.product_id.toString()}
             numColumns={2}
             contentContainerStyle={{ padding: 16 }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
           />
         )}
       </View>
