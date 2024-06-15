@@ -62,7 +62,7 @@ export default function Post() {
     }
   }, [productId]);
 
-  console.log(productData?.data?.title);
+  console.log(productData);
 
   if (isLoading) {
     return <Loader />;

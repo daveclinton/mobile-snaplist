@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 
 import { useMarketPlaces } from "@/api/market-places.tsx/use-marketplaces";
@@ -11,6 +11,7 @@ import {
   View,
 } from "@/ui";
 import Loader from "@/components/Loader";
+import { FontAwesome } from "@expo/vector-icons";
 const Ebay = require("../assets/ebay.svg");
 const Facebook = require("../assets/facebook.svg");
 
@@ -18,8 +19,6 @@ export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-  console.log(isDataLoaded);
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -39,27 +38,29 @@ export default function ConnectMarket() {
         <Text className="text-center text-xl font-bold">
           Choose Marketplace to Connect
         </Text>
-        <View className="mt-2 flex flex-row flex-wrap gap-5">
-          {data?.data?.map(
-            (
-              { consent_url, name }: { consent_url: any; name: string },
-              index: any
-            ) => (
-              <Pressable
-                key={index}
-                onPress={() => {
-                  router.push(consent_url);
-                }}
-                className="h-20 w-20 rounded-full bg-white shadow-lg"
-              >
-                <Image
-                  source={name === "Ebay" ? Ebay : Facebook}
-                  className="h-full w-full overflow-hidden"
-                />
-              </Pressable>
-            )
-          )}
-        </View>
+        {data?.data?.map((item: any) => (
+          <Link key={item?.name} href={item?.consent_url || ""} asChild>
+            <Pressable className="my-4  p-4 bg-white rounded-md shadow-md">
+              <View className="flex-row justify-between items-center">
+                <View>
+                  <Pressable className="h-20 w-20 rounded-full bg-white shadow-lg">
+                    <Image
+                      source={item?.name === "Ebay" ? Ebay : Facebook}
+                      className="h-full w-full overflow-hidden"
+                    />
+                  </Pressable>
+                  <View>
+                    <Text className="text-[#2A2661] text-lg">{item?.name}</Text>
+                    <Text className="text-[#2A2661] text-sm">
+                      Press Card to Connect
+                    </Text>
+                  </View>
+                </View>
+                <FontAwesome name="arrow-right" size={24} color="#2A2661" />
+              </View>
+            </Pressable>
+          </Link>
+        ))}
         <Text className="text-center text-xl">OR</Text>
         <Button
           label="Skip"

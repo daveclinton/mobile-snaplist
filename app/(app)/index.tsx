@@ -1,19 +1,13 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { RefreshControl, TextInput } from "react-native";
-import { MasonryFlashList } from "@shopify/flash-list";
+import { FlatList, RefreshControl, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { Card, InventoryItem } from "@/components/card";
-import {
-  EmptyList,
-  FocusAwareStatusBar,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "@/ui";
+import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
 import { useInventory } from "@/api/market-places.tsx/use-inventory";
+import ProductCard from "@/components/Product-Card";
+import Loader from "@/components/Loader";
 
 const Maercari = require("../../assets/mercari.svg");
 const Facebook = require("../../assets/facebook.svg");
@@ -22,7 +16,6 @@ const EmptyState = require("../../assets/emptyState.svg");
 
 export default function Feed() {
   const { data, isLoading, isError, refetch } = useInventory();
-  console.log(data);
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -35,11 +28,6 @@ export default function Feed() {
   useEffect(() => {
     refetch();
   }, [refetch]);
-
-  const renderItem = useCallback(
-    ({ item }: { item: InventoryItem }) => <Card {...item} />,
-    []
-  );
 
   if (isError) {
     return (
@@ -115,17 +103,44 @@ export default function Feed() {
             <Text className="font-bold">Mercari</Text>
           </View>
         </View>
-        <MasonryFlashList
-          data={data}
-          renderItem={renderItem}
-          numColumns={2}
-          keyExtractor={(item) => `item-${item?.product_id}`}
-          ListEmptyComponent={<EmptyList isLoading={isLoading} />}
-          estimatedItemSize={300}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
+
+        {isLoading ? (
+          <View className="flex-1 justify-center items-center">
+            <Loader />
+          </View>
+        ) : data.length === 0 ? (
+          <>
+            <FocusAwareStatusBar />
+            <View className="flex-1 justify-center items-center p-6">
+              <View className="h-36 w-36">
+                <Image
+                  source={EmptyState}
+                  className=" h-full w-full overflow-hidden"
+                />
+              </View>
+              <Text>No Products Added</Text>
+            </View>
+            <View className="absolute bottom-10 right-5">
+              <TouchableOpacity
+                className="bg-[#2A2661] px-4 py-3 rounded-lg"
+                onPress={() => router.push("/list-item")}
+              >
+                <Text className="text-white font-bold">Add New Product</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <FlatList
+            data={data}
+            renderItem={({ item }) => <ProductCard item={item} />}
+            keyExtractor={(item) => item.product_id.toString()}
+            numColumns={2}
+            contentContainerStyle={{ padding: 16 }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        )}
       </View>
     </>
   );

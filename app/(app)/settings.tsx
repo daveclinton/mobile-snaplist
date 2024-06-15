@@ -30,7 +30,13 @@ export default function Settings() {
             <Item text="Privacy" icon={<Rate color={iconColor} />} />
             <Item text="Manage Account" icon={<Support color={iconColor} />} />
             <Item text="Saved" icon={<Share color={iconColor} />} />
-            <Item text="About" icon={<Share color={iconColor} />} />
+            <Item
+              text="About"
+              icon={<Share color={iconColor} />}
+              onPress={() => {
+                router.replace("/connect-market");
+              }}
+            />
             <Item
               text="Logout"
               onPress={() => {
