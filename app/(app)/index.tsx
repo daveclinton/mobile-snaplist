@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FlatList, RefreshControl, TextInput } from "react-native";
+import { FlatList, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";

@@ -43,7 +43,7 @@ export default function ConnectMarket() {
             <Pressable className="my-4  p-4 bg-white rounded-md shadow-md">
               <View className="flex-row justify-between items-center">
                 <View>
-                  <Pressable className="h-20 w-20 rounded-full bg-white shadow-lg">
+                  <Pressable className="h-20 w-20 rounded-full bg-white">
                     <Image
                       source={item?.name === "Ebay" ? Ebay : Facebook}
                       className="h-full w-full overflow-hidden"
@@ -61,9 +61,8 @@ export default function ConnectMarket() {
             </Pressable>
           </Link>
         ))}
-        <Text className="text-center text-xl">OR</Text>
         <Button
-          label="Skip"
+          label="Next"
           onPress={() => router.push("/")}
           className="mt-[10%]"
         />
