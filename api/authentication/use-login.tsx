@@ -1,19 +1,38 @@
-import { isAxiosError, type AxiosError } from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { AxiosError } from "axios";
 import { createMutation } from "react-query-kit";
 import { client } from "../common/client";
-import { storage, userObject } from "../storage";
 
 type Variables = {
   username: string;
   password: string;
 };
 
-export const useLogin = createMutation<any, Variables, AxiosError>({
+type ResponseData = {
+  data: {
+    access_token: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+    };
+  };
+};
+
+const USER_DATA_KEY = "user-data";
+
+export const useLogin = createMutation<ResponseData, Variables, AxiosError>({
   mutationFn: async (variables) => {
     try {
-      const response = await client.post<any>("/login", variables);
+      const response = await client.post<ResponseData>("/login", variables);
       const { data } = response;
-      storage.set("userData", JSON.stringify(data.data));
+      if (data && data.data) {
+        const userData = JSON.stringify(data.data);
+        await AsyncStorage.setItem(USER_DATA_KEY, userData);
+      } else {
+        console.error("Invalid response structure:", response);
+        throw new Error("Invalid response structure");
+      }
       return data;
     } catch (error) {
       if (isAxiosError(error)) {
@@ -25,3 +44,7 @@ export const useLogin = createMutation<any, Variables, AxiosError>({
     }
   },
 });
+
+function isAxiosError(error: unknown): error is AxiosError {
+  return (error as AxiosError).isAxiosError !== undefined;
+}

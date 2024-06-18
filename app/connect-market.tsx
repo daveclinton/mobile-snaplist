@@ -19,6 +19,7 @@ export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -40,7 +41,14 @@ export default function ConnectMarket() {
         </Text>
         {data?.data?.map((item: any) => (
           <Link key={item?.name} href={item?.consent_url || ""} asChild>
-            <Pressable className="my-4  p-4 bg-white rounded-md shadow-md">
+            <Pressable
+              onPress={() => {
+                setTimeout(() => {
+                  setIsFirstTime(false);
+                }, 200);
+              }}
+              className="my-4  p-4 bg-white rounded-md shadow-md"
+            >
               <View className="flex-row justify-between items-center">
                 <View>
                   <Pressable className="h-20 w-20 rounded-full bg-white">
@@ -61,11 +69,13 @@ export default function ConnectMarket() {
             </Pressable>
           </Link>
         ))}
-        <Button
-          label="Next"
-          onPress={() => router.push("/")}
-          className="mt-[10%]"
-        />
+        {!isFirstTime && (
+          <Button
+            label="Next"
+            onPress={() => router.push("/")}
+            className="mt-[10%]"
+          />
+        )}
       </View>
     </>
   );
