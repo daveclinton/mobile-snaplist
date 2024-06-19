@@ -211,7 +211,6 @@ async function publishProduct(productId: string) {
   const parsedUserData = JSON.parse(userData);
   const token = parsedUserData.access_token;
   const apiUrl = `https://snaplist-tdfh.onrender.com/api/v1/inventory/${productId}/publish`;
-
   const options = {
     method: "POST",
     headers: {

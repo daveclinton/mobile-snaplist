@@ -232,10 +232,10 @@ async function uploadImageAsync(uri: string) {
   }
   const parsedUserData = JSON.parse(userData);
   const token = parsedUserData.access_token;
-  const apiUrl =
-    "https://348e-102-135-169-124.ngrok-free.app/api/v1/inventory/image/upload";
   // const apiUrl =
-  //   "https://snaplist-tdfh.onrender.com/api/v1/inventory/image/upload";
+  // "https://348e-102-135-169-124.ngrok-free.app/api/v1/inventory/image/upload";
+  const apiUrl =
+    "https://snaplist-tdfh.onrender.com/api/v1/inventory/image/upload";
   const uriArray = uri.split(".");
   const fileType = uriArray[uriArray.length - 1];
   const formData = new FormData();
