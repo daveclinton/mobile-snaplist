@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FlatList, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
@@ -17,10 +17,6 @@ export default function Feed() {
   const { data, isLoading, isError, refetch } = useInventory();
   const router = useRouter();
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
   if (isError) {
     return (
       <>
@@ -32,14 +28,14 @@ export default function Feed() {
               className=" h-full w-full overflow-hidden"
             />
           </View>
-          <Text>No Products Added</Text>
+          <Text>Error Fetching Products</Text>
         </View>
         <View className="absolute bottom-10 right-5">
           <TouchableOpacity
             className="bg-[#2A2661] px-4 py-3 rounded-lg"
-            onPress={() => router.push("/list-item")}
+            onPress={() => refetch()}
           >
-            <Text className="text-white font-bold">Add New Product</Text>
+            <Text className="text-white font-bold">Retry</Text>
           </TouchableOpacity>
         </View>
       </>

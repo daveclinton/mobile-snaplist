@@ -74,7 +74,7 @@ export default function ListItem() {
       ...formData,
       ...dummyData,
     };
-    console.log("payload", data);
+    console.log("Here", data);
     createInventory(data, {
       onSuccess: () => {
         router.push("/list-item");
