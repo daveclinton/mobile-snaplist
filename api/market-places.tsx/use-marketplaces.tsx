@@ -11,3 +11,10 @@ export const useMarketPlaces = createQuery<Response, Variables, AxiosError>({
     return client.get(`/marketplaces`).then((response) => response.data);
   },
 });
+
+export const useProfileData = createQuery<Response, Variables, AxiosError>({
+  queryKey: [""],
+  fetcher: () => {
+    return client.get(`/profile`).then((response) => response.data.data);
+  },
+});
