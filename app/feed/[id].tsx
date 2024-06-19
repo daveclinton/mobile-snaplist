@@ -105,7 +105,7 @@ export default function Post() {
       <View className="px-4 pt-6">
         <Image
           source={{
-            uri: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=800&q=80",
+            uri: productData?.data?.image_urls[0],
           }}
           className="w-full h-72 my-4"
         />

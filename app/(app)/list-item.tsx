@@ -50,9 +50,8 @@ export default function ListItem() {
 
   const onSubmit = async (formData: any) => {
     const dummyData = {
-      sku: "ABC123",
+      sku: "SNLE0098P",
       category: "Electronics",
-      ebay_offer_id: "12345678",
       marketplace: value,
       title: formData.title,
       subtitle: formData.subTitle,
@@ -74,10 +73,11 @@ export default function ListItem() {
       ...formData,
       ...dummyData,
     };
-    console.log("Here", data);
     createInventory(data, {
-      onSuccess: () => {
-        router.push("/list-item");
+      onSuccess: async () => {
+        router.push("/");
+        await AsyncStorage.removeItem("capturedPhoto");
+        await AsyncStorage.removeItem("productTitle");
         showMessage({
           message: "Product Created Successfully!",
           type: "success",

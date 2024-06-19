@@ -16,7 +16,7 @@ export const Item = ({ text, value, icon, onPress }: ItemProps) => {
     <Pressable
       onPress={onPress}
       pointerEvents={isPressable ? "auto" : "none"}
-      className="mt-4 flex-1 flex-row items-center justify-between border-b-[1px] border-neutral-200 px-4 py-2"
+      className="mt-4 flex-1 flex-row items-center justify-between shadow px-4 py-4"
     >
       <View className="flex-row items-center">
         {icon && <View className="pr-2">{icon}</View>}

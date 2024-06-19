@@ -9,7 +9,7 @@ const ProductCard = ({ item }: { [key: string]: any }) => {
     price = "Rp. 0",
     rating = 0,
     reviews = 0,
-    image = null,
+    image_urls = null,
     product_id,
   } = item;
 
@@ -21,12 +21,12 @@ const ProductCard = ({ item }: { [key: string]: any }) => {
       <Pressable className="w-1/2 p-2">
         <View className="bg-white rounded-lg p-4 shadow">
           <Image
-            source={{ uri: image || defaultImage }}
+            source={{ uri: image_urls[0] || defaultImage }}
             className="h-32 w-full"
             resizeMode="contain"
           />
           <Text className="text-sm font-medium mt-2">{title.slice(0, 21)}</Text>
-          <Text className="text-sm text-red-500">{price}</Text>
+          <Text className="text-sm text-red-500">$ {price}</Text>
           <View className="flex-row items-center">
             <Feather name="star" size={12} color="gold" />
             <Text className="text-xs">{rating}</Text>

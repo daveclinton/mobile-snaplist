@@ -6,7 +6,7 @@ export const client = axios.create({
   baseURL: "https://348e-102-135-169-124.ngrok-free.app/api/v1",
   headers: {
     Accept: "application/json",
-    "Content-Type": "multipart/form-data",
+    "Content-Type": "application/json",
   },
 });
 

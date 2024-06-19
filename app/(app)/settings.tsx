@@ -26,13 +26,8 @@ export default function Settings() {
       <ScrollView>
         <View className="flex-1 px-4 pt-1 ">
           <ItemsContainer>
-            <Item text="Notifications" icon={<Share color={iconColor} />} />
-            <Item text="Privacy" icon={<Rate color={iconColor} />} />
-            <Item text="Manage Account" icon={<Support color={iconColor} />} />
-            <Item text="Saved" icon={<Share color={iconColor} />} />
             <Item
-              text="About"
-              icon={<Share color={iconColor} />}
+              text="Connected MarketPlaces"
               onPress={() => {
                 router.replace("/connect-market");
               }}
