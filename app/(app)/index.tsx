@@ -15,7 +15,6 @@ const EmptyState = require("../../assets/emptyState.svg");
 
 export default function Feed() {
   const { data, isLoading, isError, refetch } = useInventory();
-  console.log("getData", data);
   const router = useRouter();
   if (isError) {
     return (
