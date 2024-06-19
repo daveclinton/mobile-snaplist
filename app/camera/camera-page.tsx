@@ -1,7 +1,7 @@
 import { Button } from "@/ui/button";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
-import { useState, useRef, JSX } from "react";
+import { useState, useRef } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -17,20 +17,6 @@ import Loader from "@/components/Loader";
 import { CancelIcon, SmallCancel } from "@/ui/icons/cancel-icon";
 import { showMessage } from "react-native-flash-message";
 import ProductItem from "@/components/Porduct-Item";
-
-export const createFormData = (uri: string): FormData => {
-  const fileName = uri.split("/").pop() || "";
-  const fileType = fileName.split(".").pop() || "";
-  const formData = new FormData();
-
-  formData.append("file", {
-    uri,
-    name: fileName,
-    type: `image/${fileType}`,
-  } as any);
-
-  return formData;
-};
 
 export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -238,14 +224,20 @@ async function uploadImageAsync(uri: string) {
     "https://snaplist-tdfh.onrender.com/api/v1/inventory/image/upload";
   const uriArray = uri.split(".");
   const fileType = uriArray[uriArray.length - 1];
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const imageSizeInMB = blob.size / (1024 * 1024);
+
+  if (imageSizeInMB > 10) {
+    alert("Image size exceeds 10 MB");
+    throw new Error("Image exceed 10 MB");
+  }
   const formData = new FormData();
   formData.append("image", {
     uri,
     name: `photo.${fileType}`,
     type: `image/${fileType}`,
   } as any);
-
-  console.log(formData, "formData");
 
   const options = {
     method: "POST",

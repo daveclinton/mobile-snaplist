@@ -123,6 +123,7 @@ export default function Feed() {
             keyExtractor={(item) => item.product_id.toString()}
             numColumns={2}
             contentContainerStyle={{ padding: 16 }}
+            ListEmptyComponent={() => (isLoading ? <Loader /> : <Loader />)}
           />
         )}
       </View>
