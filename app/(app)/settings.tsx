@@ -6,7 +6,6 @@ import { logout } from "@/api/common/client";
 import { Item } from "@/components/settings/item";
 import { ItemsContainer } from "@/components/settings/items-container";
 import { colors, FocusAwareStatusBar, ScrollView, View } from "@/ui";
-import { Rate, Share, Support } from "@/ui/icons";
 
 export default function Settings() {
   const router = useRouter();

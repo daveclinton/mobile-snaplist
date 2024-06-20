@@ -119,11 +119,14 @@ export default function Feed() {
         ) : (
           <FlatList
             data={data}
-            renderItem={({ item }) => <ProductCard item={item} />}
+            renderItem={({ item }) => {
+              return <ProductCard item={item} />;
+            }}
             keyExtractor={(item) => item.product_id.toString()}
             numColumns={2}
             contentContainerStyle={{ padding: 16 }}
             ListEmptyComponent={() => (isLoading ? <Loader /> : <Loader />)}
+            showsVerticalScrollIndicator={false}
           />
         )}
       </View>

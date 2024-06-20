@@ -1,6 +1,5 @@
 /* eslint-disable max-lines-per-function */
 import Slider from "@react-native-community/slider";
-import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,22 +18,34 @@ import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory
 import Loader from "@/components/Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
+import SelectMarketPlace from "@/components/select-market";
+import SelectCategory from "@/components/select-category";
+import SelectBrand from "@/components/select-brand";
 
 export default function ListItem() {
   const { handleSubmit, control, setValue } = useForm<any>({});
   const { mutate: createInventory, isPending } = useCreateInventory();
-  const [open, setOpen] = useState(false);
-  const [value, setItem] = useState(null);
-  const [items, setItems] = useState([
-    { label: "Ebay", value: "Ebay" },
-    { label: "Facebook", value: "Facebook" },
-  ]);
   const [sliderValue, setSliderValue] = useState(50);
   const router = useRouter();
   const handleSliderValueChange = (value: React.SetStateAction<number>) => {
     setSliderValue(value);
   };
   const [imageURI, setImageURI] = useState<any>(null);
+
+  const [marketplace, setMarketplace] = useState<string | null>(null);
+  const handleMarketplaceChange = (value: string | null) => {
+    setMarketplace(value);
+  };
+
+  const [category, setCategory] = useState<string | null>(null);
+  const handleCategoryChange = (value: string | null) => {
+    setCategory(value);
+  };
+
+  const [brand, setBrand] = useState<string | null>(null);
+  const handleBrandChange = (value: string | null) => {
+    setBrand(value);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,15 +62,15 @@ export default function ListItem() {
   const onSubmit = async (formData: any) => {
     const dummyData = {
       sku: "SNLE0098P",
-      category: "Electronics",
-      marketplace: value,
+      category: category,
+      marketplace: marketplace,
       title: formData.title,
-      subtitle: formData.subTitle,
+      subtitle: "We don't have one",
       description: formData.description,
       currency: "USD",
       price: parseFloat(sliderValue.toFixed(2)),
       isbn: "",
-      brand: "Apple",
+      brand: brand,
       quantity: 1,
       condition: "NEW",
       condition_description: formData.condition_description,
@@ -73,6 +84,7 @@ export default function ListItem() {
       ...formData,
       ...dummyData,
     };
+    console.log("formData", data);
     createInventory(data, {
       onSuccess: async () => {
         router.push("/");
@@ -116,27 +128,15 @@ export default function ListItem() {
             name="description"
             label="Description"
           />
-          <ControlledNormalInput
-            control={control}
-            name="subTitle"
-            label="Category"
-          />
+          <SelectCategory onCategoryChange={handleCategoryChange} />
+          <SelectBrand onBrandChange={handleBrandChange} />
           <ControlledNormalInput
             testID="email-input"
             control={control}
             name="condition_description"
             label="Condition"
           />
-          <Text className="my-3">MarketPlace</Text>
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setItem}
-            setItems={setItems}
-            listMode="SCROLLVIEW"
-          />
+          <SelectMarketPlace onMarketplaceChange={handleMarketplaceChange} />
           <Text className="my-3">Set Price</Text>
           <View>
             <Slider

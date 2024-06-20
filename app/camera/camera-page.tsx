@@ -17,6 +17,7 @@ import Loader from "@/components/Loader";
 import { CancelIcon, SmallCancel } from "@/ui/icons/cancel-icon";
 import { showMessage } from "react-native-flash-message";
 import ProductItem from "@/components/Porduct-Item";
+import { baseUrl } from "@/api/common/client";
 
 export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -218,10 +219,7 @@ async function uploadImageAsync(uri: string) {
   }
   const parsedUserData = JSON.parse(userData);
   const token = parsedUserData.access_token;
-  // const apiUrl =
-  // "https://348e-102-135-169-124.ngrok-free.app/api/v1/inventory/image/upload";
-  const apiUrl =
-    "https://snaplist-tdfh.onrender.com/api/v1/inventory/image/upload";
+  const apiUrl = `${baseUrl}inventory/image/upload`;
   const uriArray = uri.split(".");
   const fileType = uriArray[uriArray.length - 1];
   const response = await fetch(uri);

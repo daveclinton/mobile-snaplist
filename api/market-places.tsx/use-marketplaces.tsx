@@ -18,3 +18,21 @@ export const useProfileData = createQuery<Response, Variables, AxiosError>({
     return client.get(`/profile`).then((response) => response.data.data);
   },
 });
+
+export const useCategories = createQuery<Response, Variables, AxiosError>({
+  queryKey: ["data"],
+  fetcher: () => {
+    return client.get(`/inventory/products/categories`).then((response) => {
+      response.data;
+    });
+  },
+});
+
+export const useBrands = createQuery<Response, Variables, AxiosError>({
+  queryKey: ["data"],
+  fetcher: () => {
+    return client.get(`/brands`).then((response) => {
+      response.data;
+    });
+  },
+});

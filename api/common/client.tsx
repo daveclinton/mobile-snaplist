@@ -4,6 +4,7 @@ import axios from "axios";
 export const client = axios.create({
   baseURL: "https://snaplist-tdfh.onrender.com/api/v1",
   // baseURL: "https://348e-102-135-169-124.ngrok-free.app/api/v1",
+  // baseURL: "https://ed3b-102-135-169-125.ngrok-free.app/api/v1",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -58,3 +59,6 @@ export const logout = async () => {
     console.error("Error removing user data:", error);
   }
 };
+
+// export const baseUrl = "https://ed3b-102-135-169-125.ngrok-free.app/api/v1/";
+export const baseUrl = "https://snaplist-tdfh.onrender.com/api/v1/";

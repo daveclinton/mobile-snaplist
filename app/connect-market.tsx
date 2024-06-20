@@ -2,6 +2,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 
 import {
+  useBrands,
   useMarketPlaces,
   useProfileData,
 } from "@/api/market-places.tsx/use-marketplaces";
@@ -22,6 +23,7 @@ export default function ConnectMarket() {
   const router = useRouter();
   const { data, isLoading } = useMarketPlaces();
   const { data: profileData } = useProfileData();
+
   const connectedMarketplaces = profileData?.connected_marketplaces || [];
   const connectedMarketplacesStatus = connectedMarketplaces.map(
     (marketplace: any) => {
@@ -57,12 +59,7 @@ export default function ConnectMarket() {
               marketplace.marketplace_id === item.id && marketplace.connected
           );
           return (
-            <Link
-              disabled={connectedMarketplace}
-              key={item?.name}
-              href={item?.consent_url || ""}
-              asChild
-            >
+            <Link key={item?.name} href={item?.consent_url || ""} asChild>
               <Pressable
                 className={`my-4 p-4 bg-white rounded-md shadow-md ${
                   connectedMarketplace ? "border-2 border-[#2A2661]" : ""
@@ -97,7 +94,7 @@ export default function ConnectMarket() {
             </Link>
           );
         })}
-        {profileData?.connected_marketplaces.length > 0 && (
+        {profileData?.connected_marketplaces?.length > 0 && (
           <Button
             label="Close Page"
             onPress={() => router.push("/")}
