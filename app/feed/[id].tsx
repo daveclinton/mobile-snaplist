@@ -1,6 +1,6 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
+import * as Clipboard from "expo-clipboard";
 import * as React from "react";
-
 import {
   ActivityIndicator,
   FocusAwareStatusBar,
@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import { baseUrl } from "@/api/common/client";
+import { Ionicons } from "@expo/vector-icons";
 
 const EmptyState = require("../../assets/emptyState.svg");
 
@@ -27,7 +28,6 @@ export default function Post() {
     setLoading(true);
     try {
       await publishProduct(productId as string);
-      alert("Product published successfully");
     } catch (error) {
       console.error("Failed to publish product:", error);
       alert("Failed to publish product");
@@ -35,9 +35,18 @@ export default function Post() {
       setLoading(false);
     }
   };
-
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await delistProduct(productId as string);
+    } catch (error) {
+      console.error("Failed to publish product:", error);
+      alert("Failed to publish product");
+    } finally {
+      setLoading(false);
+    }
+  };
   const productId = local?.id;
-
   const [productData, setProductData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -63,8 +72,7 @@ export default function Post() {
     }
   }, [productId]);
 
-  console.log(productData);
-
+  const ebayLink = `https://www.sandbox.ebay.com/itm/${productData?.data?.ebay_listing_id}`;
   if (isLoading) {
     return <Loader />;
   }
@@ -119,7 +127,18 @@ export default function Post() {
         <View className="flex-row items-center my-2">
           <Text className="text-yellow-500">⭐ 4.6</Text>
           <Text className="ml-2 text-gray-500">86 Reviews</Text>
-          <Text className="ml-auto text-green-600">Tersedia : 250</Text>
+          {productData?.data?.ebay_listing_id && (
+            <Pressable
+              onPress={() => {
+                Clipboard.setStringAsync(ebayLink);
+              }}
+            >
+              <Text className="ml-auto text-green-600">
+                Copy Listing Link
+                <Ionicons name="copy-outline" size={14} color="#16a34a" />
+              </Text>
+            </Pressable>
+          )}
         </View>
         <View className="flex-row items-center my-2">
           <Image
@@ -138,15 +157,21 @@ export default function Post() {
           {productData?.data?.description}
         </Text>
         <TouchableOpacity
-          className="bg-[#2A2661]  mt-4 py-3 rounded-lg flex items-center justify-center"
-          onPress={handlePublish}
+          className={` ${
+            productData?.data?.status === "DRAFT"
+              ? "bg-[#2A2661]"
+              : "bg-[#D16666]"
+          } mt-4 py-3 rounded-lg flex items-center justify-center`}
+          onPress={
+            productData?.data?.status === "DRAFT" ? handlePublish : handleDelete
+          }
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
             <Text className="text-white text-center font-semibold">
-              Publish
+              {productData?.data?.status === "ACTIVE" ? "De List" : "Publish"}
             </Text>
           )}
         </TouchableOpacity>
@@ -218,5 +243,40 @@ async function publishProduct(productId: string) {
       Authorization: `Bearer ${token}`,
     },
   };
-  return fetch(apiUrl, options);
+  try {
+    const response = await fetch(apiUrl, options);
+    const data = await response.json();
+    console.log("Published response", data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    console.error("Failed to publish product:", error);
+    throw new Error("Failed to publish product");
+  }
+}
+
+async function delistProduct(productId: string) {
+  const userData = await AsyncStorage.getItem("user-data");
+  if (!userData) {
+    throw new Error("User data not found");
+  }
+  const parsedUserData = JSON.parse(userData);
+  const token = parsedUserData.access_token;
+  const apiUrl = `${baseUrl}inventory/${productId}/delete`;
+  const options = {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const response = await fetch(apiUrl, options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    console.error("Failed to publish product:", error);
+    throw new Error("Failed to publish product");
+  }
 }

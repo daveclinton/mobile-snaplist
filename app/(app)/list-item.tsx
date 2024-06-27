@@ -76,15 +76,15 @@ export default function ListItem() {
       condition_description: formData.condition_description,
       locale: "en_US",
       images: [imageURI],
-      weight_unit: "POUND",
-      weight_value: 0,
+      weight_unit: "KILOGRAM",
+      weight_value: 1,
       mpn: "MLVF3LL/A",
     };
     const data = {
       ...formData,
       ...dummyData,
     };
-    console.log("formData", data);
+
     createInventory(data, {
       onSuccess: async () => {
         router.push("/");
@@ -104,15 +104,15 @@ export default function ListItem() {
     <ScrollView showsVerticalScrollIndicator={false}>
       <FocusAwareStatusBar />
       {isPending && <Loader />}
-      <SafeAreaView>
-        <View className="flex-1 px-6">
-          <Button
-            label="Take Picture"
-            onPress={() => {
-              router.push("/camera/camera-page");
-            }}
-            variant="outline"
-          />
+      <View className="flex-1 px-6">
+        <Button
+          label="Take Picture"
+          onPress={() => {
+            router.push("/camera/camera-page");
+          }}
+          variant="outline"
+        />
+        {imageURI !== null && (
           <View className=" items-center justify-center">
             <Image
               source={{
@@ -121,43 +121,43 @@ export default function ListItem() {
               className="rounded-xl h-20 w-20 object-contain"
             />
           </View>
-          <Text>Fill Item Details</Text>
-          <ControlledNormalInput control={control} name="title" label="Title" />
-          <ControlledNormalInput
-            control={control}
-            name="description"
-            label="Description"
+        )}
+        <Text className="mt-1">Fill Item Details</Text>
+        <ControlledNormalInput control={control} name="title" label="Title" />
+        <ControlledNormalInput
+          control={control}
+          name="description"
+          label="Description"
+        />
+        <SelectCategory onCategoryChange={handleCategoryChange} />
+        <SelectBrand onBrandChange={handleBrandChange} />
+        <ControlledNormalInput
+          testID="email-input"
+          control={control}
+          name="condition_description"
+          label="Condition"
+        />
+        <SelectMarketPlace onMarketplaceChange={handleMarketplaceChange} />
+        <Text className="my-3">Set Price</Text>
+        <View>
+          <Slider
+            // eslint-disable-next-line react-native/no-inline-styles
+            style={{ width: "100%", height: 40 }}
+            minimumValue={50}
+            maximumValue={10000}
+            minimumTrackTintColor="#2A2661"
+            maximumTrackTintColor="#2A2661"
+            thumbTintColor="#2A2661"
+            value={sliderValue}
+            onValueChange={handleSliderValueChange}
           />
-          <SelectCategory onCategoryChange={handleCategoryChange} />
-          <SelectBrand onBrandChange={handleBrandChange} />
-          <ControlledNormalInput
-            testID="email-input"
-            control={control}
-            name="condition_description"
-            label="Condition"
-          />
-          <SelectMarketPlace onMarketplaceChange={handleMarketplaceChange} />
-          <Text className="my-3">Set Price</Text>
-          <View>
-            <Slider
-              // eslint-disable-next-line react-native/no-inline-styles
-              style={{ width: "100%", height: 40 }}
-              minimumValue={50}
-              maximumValue={10000}
-              minimumTrackTintColor="#2A2661"
-              maximumTrackTintColor="#2A2661"
-              thumbTintColor="#2A2661"
-              value={sliderValue}
-              onValueChange={handleSliderValueChange}
-            />
-            <View className="flex flex-row justify-between px-2">
-              <Text>$ 50.00</Text>
-              <Text>$ {sliderValue.toFixed(2)}</Text>
-            </View>
+          <View className="flex flex-row justify-between px-2">
+            <Text>$ 50.00</Text>
+            <Text>$ {sliderValue.toFixed(2)}</Text>
           </View>
-          <Button label="List Now" onPress={handleSubmit(onSubmit)} />
         </View>
-      </SafeAreaView>
+        <Button label="List Now" onPress={handleSubmit(onSubmit)} />
+      </View>
     </ScrollView>
   );
 }

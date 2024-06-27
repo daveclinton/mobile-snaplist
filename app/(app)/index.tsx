@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
-import { useInventory } from "@/api/market-places.tsx/use-inventory";
 import ProductCard from "@/components/Product-Card";
 import Loader from "@/components/Loader";
+import { baseUrl } from "@/api/common/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Maercari = require("../../assets/mercari.svg");
 const Facebook = require("../../assets/facebook.svg");
@@ -14,8 +15,26 @@ const Ebay = require("../../assets/ebay.svg");
 const EmptyState = require("../../assets/emptyState.svg");
 
 export default function Feed() {
-  const { data, isLoading, isError, refetch } = useInventory();
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const router = useRouter();
+  async function fetchData() {
+    try {
+      setIsLoading(true);
+      const response = await getAllProducts();
+      const result = await response.json();
+      setData(result?.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsError(true);
+      setIsLoading(false);
+    }
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   if (isError) {
     return (
       <>
@@ -32,7 +51,7 @@ export default function Feed() {
         <View className="absolute bottom-10 right-5">
           <TouchableOpacity
             className="bg-[#2A2661] px-4 py-3 rounded-lg"
-            onPress={() => refetch()}
+            // onPress={() => refetch()}
           >
             <Text className="text-white font-bold">Retry</Text>
           </TouchableOpacity>
@@ -122,7 +141,7 @@ export default function Feed() {
             renderItem={({ item }) => {
               return <ProductCard item={item} />;
             }}
-            keyExtractor={(item) => item.product_id.toString()}
+            keyExtractor={(item: any) => item.product_id.toString()}
             numColumns={2}
             contentContainerStyle={{ padding: 16 }}
             ListEmptyComponent={() => (isLoading ? <Loader /> : <Loader />)}
@@ -132,4 +151,22 @@ export default function Feed() {
       </View>
     </>
   );
+}
+
+async function getAllProducts() {
+  const userData = await AsyncStorage.getItem("user-data");
+  if (!userData) {
+    throw new Error("User data not found");
+  }
+  const parsedUserData = JSON.parse(userData);
+  const token = parsedUserData.access_token;
+  const apiUrl = `${baseUrl}inventory`;
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return fetch(apiUrl, options);
 }

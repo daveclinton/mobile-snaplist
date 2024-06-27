@@ -14,6 +14,8 @@ PODS:
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
+  - ExpoClipboard (6.0.3):
+    - ExpoModulesCore
   - ExpoFileSystem (17.0.1):
     - ExpoModulesCore
   - ExpoFont (12.0.6):
@@ -1433,6 +1435,7 @@ DEPENDENCIES:
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
+  - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
@@ -1538,6 +1541,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-asset/ios"
   ExpoCamera:
     :path: "../node_modules/expo-camera/ios"
+  ExpoClipboard:
+    :path: "../node_modules/expo-clipboard/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
@@ -1698,6 +1703,7 @@ SPEC CHECKSUMS:
   Expo: 3bc69739da02780763c1fd66dde56f84fc46d0d8
   ExpoAsset: 9605d71f50ff0554c618d415c991106f13df63f9
   ExpoCamera: 11129a52e17fea1701ce923db49b08de8494145a
+  ExpoClipboard: 23d203f5d4843699fbc45be1cc4fe1fbd811a6fa
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
   ExpoFont: c84702079267ae51161c20bb8b925670907ffa2f
   ExpoHead: 8eb4deb289c2fdd8bb624f996cd31414cd07f38a
