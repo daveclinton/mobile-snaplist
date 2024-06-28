@@ -16,7 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import { baseUrl } from "@/api/common/client";
-import { Ionicons } from "@expo/vector-icons";
+import { EvilIcons, Ionicons } from "@expo/vector-icons";
+import { Alert, Platform, ToastAndroid } from "react-native";
 
 const EmptyState = require("../../assets/emptyState.svg");
 
@@ -24,10 +25,31 @@ export default function Post() {
   const local = useLocalSearchParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
 
+  const productId = local?.id;
+  const [productData, setProductData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  const fetchProduct = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getSingleProduct(productId as string);
+      const data = await response.json();
+      setProductData(data);
+      setIsError(false);
+    } catch (error) {
+      console.error("Failed to fetch product:", error);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handlePublish = async () => {
     setLoading(true);
     try {
       await publishProduct(productId as string);
+      await fetchProduct();
     } catch (error) {
       console.error("Failed to publish product:", error);
       alert("Failed to publish product");
@@ -39,34 +61,18 @@ export default function Post() {
     setLoading(true);
     try {
       await delistProduct(productId as string);
+      await fetchProduct();
     } catch (error) {
-      console.error("Failed to publish product:", error);
-      alert("Failed to publish product");
+      console.error("Failed to delete product:", error);
+      alert("Failed to delete product");
     } finally {
       setLoading(false);
     }
   };
-  const productId = local?.id;
-  const [productData, setProductData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+
+  console.log(productData);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getSingleProduct(productId as string);
-        const data = await response.json();
-        setProductData(data);
-        setIsError(false);
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (productId) {
       fetchProduct();
     }
@@ -124,18 +130,38 @@ export default function Post() {
         <Text className="text-red-600 text-2xl font-bold">
           $ {productData?.data?.price}
         </Text>
-        <View className="flex-row items-center my-2">
-          <Text className="text-yellow-500">⭐ 4.6</Text>
-          <Text className="ml-2 text-gray-500">86 Reviews</Text>
+        <View className="flex-row items-center justify-between my-2">
+          <Text className="ml-2 text-gray-500 font-bold">
+            MarketPlace: {productData?.data?.marketplace_name}
+          </Text>
           {productData?.data?.ebay_listing_id && (
             <Pressable
               onPress={() => {
-                Clipboard.setStringAsync(ebayLink);
+                Clipboard.setStringAsync(ebayLink)
+                  .then(() => {
+                    if (Platform.OS === "android") {
+                      ToastAndroid.show(
+                        "Link copied to clipboard",
+                        ToastAndroid.SHORT
+                      );
+                    } else {
+                      Alert.alert("Success", "Link copied to clipboard");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Failed to copy link:", error);
+                    Alert.alert("Error", "Failed to copy link");
+                  });
               }}
             >
               <Text className="ml-auto text-green-600">
-                Copy Listing Link
+                Copy Link
                 <Ionicons name="copy-outline" size={14} color="#16a34a" />
+                {` or `}
+                <Link href={ebayLink}>
+                  <Text>Visit </Text>
+                  <EvilIcons name="external-link" size={14} color="#16a34a" />
+                </Link>
               </Text>
             </Pressable>
           )}

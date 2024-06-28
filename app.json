@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "snaplistt",
-    "slug": "test-snaplist",
-    "version": "1.0.8",
+    "slug": "snaplist",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "snaplist",
@@ -57,9 +57,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "37e492b1-312c-4574-a7c2-d351d4b38f17"
+        "projectId": "4ec4fd6b-63b4-41c9-bca3-e0f20fc8da25"
       }
     },
-    "owner": "daveclinton"
+    "owner": "martinki"
   }
 }
