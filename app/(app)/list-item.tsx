@@ -15,7 +15,6 @@ import {
   Image,
 } from "@/ui";
 import { useCreateInventory } from "@/api/market-places.tsx/use-create-inventory";
-import Loader from "@/components/Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import SelectMarketPlace from "@/components/select-market";
@@ -103,7 +102,6 @@ export default function ListItem() {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <FocusAwareStatusBar />
-      {isPending && <Loader />}
       <View className="flex-1 px-6">
         <Button
           label="Take Picture"
@@ -156,7 +154,11 @@ export default function ListItem() {
             <Text>$ {sliderValue.toFixed(2)}</Text>
           </View>
         </View>
-        <Button label="List Now" onPress={handleSubmit(onSubmit)} />
+        <Button
+          label="List Now"
+          loading={isPending}
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
     </ScrollView>
   );

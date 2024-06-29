@@ -5,18 +5,22 @@ import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";
 import { SearchIcon } from "@/ui/icons/search";
 import ProductCard from "@/components/Product-Card";
-import Loader from "@/components/Loader";
 import { baseUrl } from "@/api/common/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MotiView } from "moti";
+import { Skeleton } from "moti/skeleton";
 
 const Maercari = require("../../assets/mercari.svg");
 const Facebook = require("../../assets/facebook.svg");
 const Ebay = require("../../assets/ebay.svg");
 const EmptyState = require("../../assets/emptyState.svg");
 
+export const Spacer = ({ height = 16 }) => <View style={{ height }} />;
+
 export default function Feed() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const colorMode = "light";
   const [isError, setIsError] = useState(false);
   const router = useRouter();
   async function fetchData() {
@@ -111,10 +115,20 @@ export default function Feed() {
         </View>
 
         {isLoading ? (
-          <View className="flex-1 justify-center items-center">
-            <Loader />
-          </View>
-        ) : data.length === 0 ? (
+          <MotiView
+            transition={{
+              type: "timing",
+            }}
+            className="flex-1 items-center"
+            animate={{ backgroundColor: "#ffffff" }}
+          >
+            <Skeleton colorMode={colorMode} width="100%" height={150} />
+            <Spacer height={8} />
+            <Skeleton colorMode={colorMode} width="100%" height={150} />
+            <Spacer height={8} />
+            <Skeleton colorMode={colorMode} width="100%" height={150} />
+          </MotiView>
+        ) : data?.length === 0 ? (
           <>
             <FocusAwareStatusBar />
             <View className="flex-1 justify-center items-center p-6">
@@ -144,7 +158,6 @@ export default function Feed() {
             keyExtractor={(item: any) => item.product_id.toString()}
             numColumns={2}
             contentContainerStyle={{ padding: 16 }}
-            ListEmptyComponent={() => (isLoading ? <Loader /> : <Loader />)}
             showsVerticalScrollIndicator={false}
           />
         )}

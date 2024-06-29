@@ -25,7 +25,7 @@ const ProductCard = ({ item }: { [key: string]: any }) => {
             className="h-32 w-full"
             resizeMode="contain"
           />
-          <Text className="text-sm font-medium mt-2">{title.slice(0, 21)}</Text>
+          <Text className="text-sm font-medium mt-2">{title.slice(0, 19)}</Text>
           <Text className="text-sm text-red-500">$ {price}</Text>
           <View className="flex-row items-center">
             <Feather name="star" size={12} color="gold" />

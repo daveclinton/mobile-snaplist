@@ -1,4 +1,4 @@
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import * as React from "react";
 import {
@@ -18,13 +18,17 @@ import Loader from "@/components/Loader";
 import { baseUrl } from "@/api/common/client";
 import { EvilIcons, Ionicons } from "@expo/vector-icons";
 import { Alert, Platform, ToastAndroid } from "react-native";
+import { MotiView } from "moti";
+import { Skeleton } from "moti/skeleton";
 
 const EmptyState = require("../../assets/emptyState.svg");
+
+const Spacer = ({ height = 16 }) => <View style={{ height }} />;
 
 export default function Post() {
   const local = useLocalSearchParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
-
+  const colorMode = "light";
   const productId = local?.id;
   const [productData, setProductData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +66,7 @@ export default function Post() {
     try {
       await delistProduct(productId as string);
       await fetchProduct();
+      router.replace("/");
     } catch (error) {
       console.error("Failed to delete product:", error);
       alert("Failed to delete product");
@@ -80,7 +85,26 @@ export default function Post() {
 
   const ebayLink = `https://www.sandbox.ebay.com/itm/${productData?.data?.ebay_listing_id}`;
   if (isLoading) {
-    return <Loader />;
+    return (
+      <MotiView
+        transition={{
+          type: "timing",
+        }}
+        className="flex-1  p-5"
+        animate={{ backgroundColor: "#ffffff" }}
+      >
+        <Skeleton colorMode={colorMode} width="100%" height={150} />
+        <Spacer height={8} />
+        <Skeleton colorMode={colorMode} width={20} />
+        <Spacer height={8} />
+        <Skeleton colorMode={colorMode} radius="round" height={75} width={75} />
+        <Skeleton colorMode={colorMode} width={100} />
+        <Spacer height={8} />
+        <Skeleton colorMode={colorMode} width={150} />
+        <Spacer height={8} />
+        <Skeleton colorMode={colorMode} width="100%" />
+      </MotiView>
+    );
   }
   if (isError) {
     return (
@@ -134,6 +158,44 @@ export default function Post() {
           <Text className="ml-2 text-gray-500 font-bold">
             MarketPlace: {productData?.data?.marketplace_name}
           </Text>
+          {productData?.data?.status === "ACTIVE" &&
+            productData?.data?.marketplace_name === "Facebook" && (
+              <Pressable
+                onPress={() => {
+                  Clipboard.setStringAsync(
+                    "https://business.facebook.com/commerce/catalogs/3732230713722239/products/?business_id=383394360932309"
+                  )
+                    .then(() => {
+                      if (Platform.OS === "android") {
+                        ToastAndroid.show(
+                          "Link copied to clipboard",
+                          ToastAndroid.SHORT
+                        );
+                      } else {
+                        Alert.alert("Success", "Link copied to clipboard");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Failed to copy link:", error);
+                      Alert.alert("Error", "Failed to copy link");
+                    });
+                }}
+              >
+                <Text className="ml-auto text-green-600">
+                  Copy Link
+                  <Ionicons name="copy-outline" size={14} color="#16a34a" />
+                  {` or `}
+                  <Link
+                    href={
+                      "https://business.facebook.com/commerce/catalogs/3732230713722239/products/?business_id=383394360932309"
+                    }
+                  >
+                    <Text>Visit </Text>
+                    <EvilIcons name="external-link" size={14} color="#16a34a" />
+                  </Link>
+                </Text>
+              </Pressable>
+            )}
           {productData?.data?.ebay_listing_id && (
             <Pressable
               onPress={() => {
