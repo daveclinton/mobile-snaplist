@@ -236,7 +236,6 @@ async function uploadImageAsync(uri: string) {
     name: `photo.${fileType}`,
     type: `image/${fileType}`,
   } as any);
-
   const options = {
     method: "POST",
     body: formData,

@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import { FocusAwareStatusBar, Image, Text, TouchableOpacity, View } from "@/ui";
 import { MenuIcon } from "@/ui/icons/menu";
 import { Searchbar } from "react-native-paper";
-import { debounce } from "lodash";
 
 import ProductCard from "@/components/Product-Card";
 import { baseUrl } from "@/api/common/client";
@@ -42,7 +41,7 @@ const Spacer: React.FC<{ height?: number }> = ({ height = 16 }) => (
 );
 const MemoizedProductCard = React.memo(ProductCard);
 
-const ITEM_HEIGHT = 150; // Adjust this value based on your ProductCard height
+const ITEM_HEIGHT = 150;
 
 const Feed: React.FC = () => {
   const [data, setData] = useState<Product[]>([]);
@@ -50,9 +49,9 @@ const Feed: React.FC = () => {
   const colorMode = "light";
   const [isError, setIsError] = useState<boolean>(false);
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedPlatform, setSelectedPlatform] =
     useState<MarketplaceName>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredData = useMemo(() => {
     return data.filter(
@@ -62,11 +61,6 @@ const Feed: React.FC = () => {
           item.marketplace_name === selectedPlatform)
     );
   }, [data, searchQuery, selectedPlatform]);
-
-  const debouncedSetSearchQuery = useMemo(
-    () => debounce(setSearchQuery, 300),
-    []
-  );
 
   const fetchData = useCallback(async () => {
     try {
@@ -144,11 +138,8 @@ const Feed: React.FC = () => {
       <View className="flex-1 justify-center p-6">
         <Searchbar
           placeholder="Search"
-          onChangeText={debouncedSetSearchQuery}
+          onChangeText={setSearchQuery}
           value={searchQuery}
-          onSubmitEditing={() => {
-            console.log("Search submitted:", searchQuery);
-          }}
         />
         <Text className="text-md ml-6 mt-4 font-semibold">Platforms</Text>
         <View className="mb-4 flex w-full flex-row justify-around">
@@ -219,17 +210,21 @@ const Feed: React.FC = () => {
 
 const PlatformIcon: React.FC<PlatformIconProps> = React.memo(
   ({ icon, text, isActive, onPress }) => (
-    <TouchableOpacity onPress={onPress} className="justify-center items-center">
+    <TouchableOpacity
+      onPress={onPress}
+      className="justify-center mt-2 items-center"
+    >
       <View
         className={`
         h-12 w-12 
-        items-center mt-2 justify-center rounded-full shadow-lg shadow-white
+        items-center justify-center 
+        rounded-full shadow-lg shadow-white
         ${isActive ? "border-2 border-[#393392]" : ""}
       `}
       >
         {icon}
       </View>
-      <Text className={`font-bold`}>{text}</Text>
+      <Text className={`font-bold `}>{text}</Text>
     </TouchableOpacity>
   )
 );
@@ -263,7 +258,7 @@ const EmptyStateView: React.FC<EmptyStateViewProps> = React.memo(
             className="h-full w-full overflow-hidden"
           />
         </View>
-        <Text>No Products Matching your Query</Text>
+        <Text>No Products Added</Text>
       </View>
       <View className="absolute bottom-10 right-5">
         <TouchableOpacity
