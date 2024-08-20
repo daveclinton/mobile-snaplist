@@ -9,6 +9,7 @@ import {
   Alert,
   FlatList,
 } from "react-native";
+
 import { View, Text } from "@/ui";
 import { ImagesRoll } from "@/ui/icons/images";
 import * as ImagePicker from "expo-image-picker";
@@ -98,6 +99,8 @@ export default function CameraPage() {
     }
   };
 
+  const [photos, setPhotos] = useState([]);
+
   return (
     <>
       <Stack.Screen
@@ -116,24 +119,27 @@ export default function CameraPage() {
           },
         }}
       />
-      <CameraView style={styles.camera} facing="back" ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <View className="justify-center bg-amber-100">
-            <Text className="text-lg text-center  align-middle">
-              TAP SHUTTER BUTTON TO SEARCH
-            </Text>
+      <View className="flex-1 items-center py-5">
+        <CameraView style={styles.camera} facing="back" ref={cameraRef}>
+          <View style={styles.buttonContainer}>
+            <View className="justify-center bg-amber-100">
+              <Text className="text-lg text-center  align-middle">
+                TAP SHUTTER BUTTON TO SEARCH
+              </Text>
+            </View>
+            <View className="flex-row justify-between items-center">
+              <TouchableOpacity onPress={pickImage}>
+                <ImagesRoll />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={handleImageCapture}
+              />
+            </View>
           </View>
-          <View className="flex-row justify-between items-center">
-            <TouchableOpacity onPress={pickImage}>
-              <ImagesRoll />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.captureButton}
-              onPress={handleImageCapture}
-            />
-          </View>
-        </View>
-      </CameraView>
+        </CameraView>
+      </View>
+
       {isPending ? (
         <Loader />
       ) : capturedImageUri && uploadResponseData === null ? (
@@ -184,7 +190,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   camera: {
-    flex: 1,
+    flex: 0.5,
+    width: "90%",
+    borderRadius: 10,
   },
   buttonContainer: {
     flex: 1,
