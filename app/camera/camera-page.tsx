@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   FlatList,
+  Pressable,
 } from "react-native";
 import { View, Text } from "@/ui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +18,7 @@ import { showMessage } from "react-native-flash-message";
 import ProductItem from "@/components/Porduct-Item";
 import CameraRoll from "@/components/camera-roll";
 import { uploadImageAsync } from "@/api/ImagePicker";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -90,13 +92,20 @@ export default function CameraPage() {
       <View className="flex-1 items-center py-5">
         <CameraView style={styles.camera} facing="back" ref={cameraRef}>
           <View style={styles.buttonContainer}>
-            <View className="justify-center bg-amber-100"></View>
-            <View className="flex-1 items-center justify-center">
-              <TouchableOpacity
-                style={styles.captureButton}
-                onPress={handleImageCapture}
+            <View className="flex-row mt-10 justify-between">
+              <Feather name="x" size={24} color="white" />
+              <Text className="text-white font-bold">Snaplist Lens</Text>
+              <MaterialCommunityIcons
+                name="dots-vertical"
+                size={24}
+                color="white"
               />
-              <Text className="text-white font-bold">
+            </View>
+            <View className="flex-1 items-center justify-center">
+              <Pressable className="w-[60px] h-[60px] bg-white justify-center items-center rounded-full">
+                <Feather name="camera" size={24} color="black" />
+              </Pressable>
+              <Text className="text-white mt-5 font-bold">
                 Search with your camera
               </Text>
             </View>
