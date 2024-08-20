@@ -9,16 +9,14 @@ import {
   Alert,
   FlatList,
 } from "react-native";
-
 import { View, Text } from "@/ui";
-import { ImagesRoll } from "@/ui/icons/images";
-import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "@/components/Loader";
-import { CancelIcon, SmallCancel } from "@/ui/icons/cancel-icon";
+import { SmallCancel } from "@/ui/icons/cancel-icon";
 import { showMessage } from "react-native-flash-message";
 import ProductItem from "@/components/Porduct-Item";
-import { baseUrl } from "@/api/common/client";
+import CameraRoll from "@/components/camera-roll";
+import { uploadImageAsync } from "@/api/ImagePicker";
 
 export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -27,18 +25,6 @@ export default function CameraPage() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [uploadResponseData, setUploadResponseData] = useState<any>(null);
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      const imageUri = result.assets[0].uri;
-      setCapturedImageUri(imageUri);
-    }
-  };
 
   if (!permission || !permission.granted) {
     return (
@@ -99,47 +85,25 @@ export default function CameraPage() {
     }
   };
 
-  const [photos, setPhotos] = useState([]);
-
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTitle: "Camera",
-          headerTitleAlign: "center",
-          headerBackVisible: false,
-          headerRight: () => (
-            <TouchableOpacity onPress={handleCancel} className="ml-10">
-              <CancelIcon />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: "transparent",
-          },
-        }}
-      />
       <View className="flex-1 items-center py-5">
         <CameraView style={styles.camera} facing="back" ref={cameraRef}>
           <View style={styles.buttonContainer}>
-            <View className="justify-center bg-amber-100">
-              <Text className="text-lg text-center  align-middle">
-                TAP SHUTTER BUTTON TO SEARCH
-              </Text>
-            </View>
-            <View className="flex-row justify-between items-center">
-              <TouchableOpacity onPress={pickImage}>
-                <ImagesRoll />
-              </TouchableOpacity>
+            <View className="justify-center bg-amber-100"></View>
+            <View className="flex-1 items-center justify-center">
               <TouchableOpacity
                 style={styles.captureButton}
                 onPress={handleImageCapture}
               />
+              <Text className="text-white font-bold">
+                Search with your camera
+              </Text>
             </View>
           </View>
         </CameraView>
+        <CameraRoll />
       </View>
-
       {isPending ? (
         <Loader />
       ) : capturedImageUri && uploadResponseData === null ? (
@@ -191,8 +155,8 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 0.5,
-    width: "90%",
-    borderRadius: 10,
+    width: "100%",
+    borderRadius: 6,
   },
   buttonContainer: {
     flex: 1,
@@ -219,40 +183,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-async function uploadImageAsync(uri: string) {
-  const userData = await AsyncStorage.getItem("user-data");
-  if (!userData) {
-    throw new Error("User data not found");
-  }
-  const parsedUserData = JSON.parse(userData);
-  const token = parsedUserData.access_token;
-  const apiUrl = `${baseUrl}inventory/image/upload`;
-  const uriArray = uri.split(".");
-  const fileType = uriArray[uriArray.length - 1];
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  const imageSizeInMB = blob.size / (1024 * 1024);
-
-  if (imageSizeInMB > 10) {
-    alert("Image size exceeds 10 MB");
-    throw new Error("Image exceed 10 MB");
-  }
-  const formData = new FormData();
-  formData.append("image", {
-    uri,
-    name: `photo.${fileType}`,
-    type: `image/${fileType}`,
-  } as any);
-  const options = {
-    method: "POST",
-    body: formData,
-    mode: "cors" as RequestMode,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  return fetch(apiUrl, options);
-}

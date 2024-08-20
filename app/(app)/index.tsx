@@ -84,7 +84,7 @@ const Feed: React.FC = () => {
   }, [fetchData]);
 
   const handleAddNewProduct = useCallback(() => {
-    router.push("/camera/camera-roll");
+    router.push("/list-item");
   }, [router]);
 
   const renderProductCard = useCallback(

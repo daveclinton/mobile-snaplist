@@ -10,7 +10,7 @@ import {
 import * as MediaLibrary from "expo-media-library";
 import { Image } from "expo-image";
 
-export default function App() {
+export default function CameraRoll() {
   const [albums, setAlbums] = useState<MediaLibrary.Album[] | null>(null);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
 
