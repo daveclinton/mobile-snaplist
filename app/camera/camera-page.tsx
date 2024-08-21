@@ -10,6 +10,7 @@ import CameraRoll from "@/components/camera-roll";
 import { uploadImageAsync } from "@/api/ImagePicker";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
+import OverlayContainer from "@/components/overlay-camera";
 
 export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -86,12 +87,10 @@ export default function CameraPage() {
           from={{
             height: fullCamera ? "50%" : "90%",
             width: "100%",
-            borderRadius: fullCamera ? 20 : 0,
           }}
           animate={{
             height: fullCamera ? "90%" : "50%",
             width: "100%",
-            borderRadius: fullCamera ? 0 : 20,
           }}
           transition={{ type: "timing", duration: 300 }}
         >
@@ -100,6 +99,7 @@ export default function CameraPage() {
             facing="back"
             ref={cameraRef}
           >
+            {fullCamera && <OverlayContainer />}
             <View style={styles.buttonContainer}>
               <View className="flex-row mt-10 justify-between">
                 <Pressable
@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
   fullCamera: {
     flex: 0.9,
     width: "100%",
-    borderRadius: 20,
   },
   buttonContainer: {
     flex: 1,
