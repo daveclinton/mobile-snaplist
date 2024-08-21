@@ -2,20 +2,10 @@ import { Button } from "@/ui/button";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
 import { useState, useRef } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Alert,
-  FlatList,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Alert, Pressable } from "react-native";
 import { View, Text } from "@/ui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Loader from "@/components/Loader";
-import { SmallCancel } from "@/ui/icons/cancel-icon";
 import { showMessage } from "react-native-flash-message";
-import ProductItem from "@/components/Porduct-Item";
 import CameraRoll from "@/components/camera-roll";
 import { uploadImageAsync } from "@/api/ImagePicker";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -25,6 +15,7 @@ export default function CameraPage() {
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
   const cameraRef = useRef<any | null>(null);
   const router = useRouter();
+  const [fullCamera, setFullCamera] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
   const [uploadResponseData, setUploadResponseData] = useState<any>(null);
 
@@ -41,10 +32,10 @@ export default function CameraPage() {
   }
 
   const handleCancel = () => {
-    Alert.alert("Discard Image", "Are you sure you want to exit the camera?", [
+    Alert.alert("Exit Camera", "Are you sure you want to exit the camera?", [
       { text: "Cancel", style: "cancel" },
       {
-        text: "Discard",
+        text: "Exit",
         onPress: () => {
           setCapturedImageUri(null);
           router.push("/list-item");
@@ -90,10 +81,20 @@ export default function CameraPage() {
   return (
     <>
       <View className="flex-1 items-center py-5">
-        <CameraView style={styles.camera} facing="back" ref={cameraRef}>
+        <CameraView
+          style={fullCamera ? styles.fullCamera : styles.camera}
+          facing="back"
+          ref={cameraRef}
+        >
           <View style={styles.buttonContainer}>
             <View className="flex-row mt-10 justify-between">
-              <Feather name="x" size={24} color="white" />
+              <Pressable
+                onPress={() => {
+                  handleCancel();
+                }}
+              >
+                <Feather name="x" size={24} color="white" />
+              </Pressable>
               <Text className="text-white font-bold">Snaplist Lens</Text>
               <MaterialCommunityIcons
                 name="dots-vertical"
@@ -101,58 +102,36 @@ export default function CameraPage() {
                 color="white"
               />
             </View>
-            <View className="flex-1 items-center justify-center">
-              <Pressable className="w-[60px] h-[60px] bg-white justify-center items-center rounded-full">
-                <Feather name="camera" size={24} color="black" />
-              </Pressable>
-              <Text className="text-white mt-5 font-bold">
-                Search with your camera
-              </Text>
-            </View>
+            {!fullCamera ? (
+              <View className={`flex-1 items-center justify-center`}>
+                <Pressable
+                  onPress={() => {
+                    setFullCamera(!fullCamera);
+                  }}
+                  className="w-[60px] h-[60px] bg-transparent border-lime-100 border-2 justify-center items-center rounded-full"
+                >
+                  <Feather name="camera" size={24} color="white" />
+                </Pressable>
+                <Text className="text-white mt-5 font-bold">
+                  Search with your camera
+                </Text>
+              </View>
+            ) : (
+              <View className="flex-1 justify-end items-center mb-10">
+                <Pressable
+                  onPress={() => {
+                    setFullCamera(!fullCamera);
+                  }}
+                  className="w-[60px] h-[60px] bg-transparent border-lime-100 border-2 justify-center items-center rounded-full"
+                >
+                  <Feather name="camera" size={24} color="white" />
+                </Pressable>
+              </View>
+            )}
           </View>
         </CameraView>
-        <CameraRoll />
+        {!fullCamera && <CameraRoll />}
       </View>
-      {isPending ? (
-        <Loader />
-      ) : capturedImageUri && uploadResponseData === null ? (
-        <View className="flex-1 justify-center p-6">
-          <View className="flex justify-end items-end mb-2">
-            <TouchableOpacity
-              onPress={() => {
-                setCapturedImageUri(null);
-              }}
-            >
-              <SmallCancel />
-            </TouchableOpacity>
-          </View>
-          <Image source={{ uri: capturedImageUri }} style={{ flex: 1 }} />
-          <Button onPress={handleImageUpload} label="Upload Image" />
-        </View>
-      ) : uploadResponseData !== null ? (
-        <View className="flex-1 p-6">
-          <View className="flex justify-end items-end mb-2">
-            <TouchableOpacity
-              onPress={() => {
-                setUploadResponseData(null);
-                setCapturedImageUri(null);
-              }}
-            >
-              <SmallCancel />
-            </TouchableOpacity>
-          </View>
-          {uploadResponseData && (
-            <FlatList
-              data={uploadResponseData.image_results}
-              keyExtractor={(item, index) => item.position || index.toString()}
-              renderItem={({ item }) => (
-                <ProductItem key={item.position} {...item} />
-              )}
-              contentContainerStyle={{ paddingBottom: 20 }}
-            />
-          )}
-        </View>
-      ) : null}
     </>
   );
 }
@@ -165,7 +144,12 @@ const styles = StyleSheet.create({
   camera: {
     flex: 0.5,
     width: "100%",
-    borderRadius: 6,
+    borderRadius: 20,
+  },
+  fullCamera: {
+    flex: 0.9,
+    width: "100%",
+    borderRadius: 20,
   },
   buttonContainer: {
     flex: 1,
@@ -186,7 +170,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     marginBottom: "10%",
     marginHorizontal: "auto",
     marginTop: 10,

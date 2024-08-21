@@ -36,7 +36,6 @@ export default function CameraRoll() {
     </SafeAreaView>
   );
 }
-
 function AlbumEntry({ album }: { album: MediaLibrary.Album }) {
   const [assets, setAssets] = useState<MediaLibrary.Asset[]>([]);
 
